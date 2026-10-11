@@ -1,0 +1,10 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Benchmark and resource-monitor output
+benchmark_results/
+
+# Personal editor settings (venv path is machine-specific)
+.vscode/

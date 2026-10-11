@@ -5,7 +5,7 @@ Install (Python 3.11+ recommended):
   python -m pip install 'lm_eval[ifeval]' requests nltk
   python -m nltk.downloader punkt punkt_tab averaged_perceptron_tagger_eng
 Smoke test:
-  python evaluate_ollama.py --tasks ifeval --limit 5
+  python models/evaluate_ollama.py --tasks ifeval --limit 5
 Full IFEval: omit --limit. Limits apply PER TASK, not to the whole suite.
 Uses lm-evaluation-harness prompts/scorers with Ollama chat wrapping. This
 is a local chat-based evaluation configuration, not an exact reproduction
@@ -115,7 +115,7 @@ def main():
     parser.add_argument('--limit', type=int, default=None,
                         help='First N examples PER task; screening only.')
     parser.add_argument('--context', type=int, default=16384)
-    parser.add_argument('--base-url', default='http://localhost:11434')
+    parser.add_argument('--base-url', default='http://127.0.0.1:11434')
     parser.add_argument('--out', default='benchmark_results')
     args = parser.parse_args()
     if args.limit is not None and args.limit < 1:
