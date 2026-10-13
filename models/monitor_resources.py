@@ -78,6 +78,21 @@ def battery_reader(interval):
     return StreamReader(['powershell', '-NoProfile', '-Command', loop], parse)
 
 
+def battery_full_charge_wh():
+    # Worn batteries hold less than their rated capacity; record the real one.
+    # (BatteryStaticData's design capacity needs admin rights, so is skipped.)
+    if sys.platform != 'win32':
+        return None
+    cmd = ('(Get-CimInstance -Namespace root\\wmi -ClassName '
+           'BatteryFullChargedCapacity|Select-Object -First 1).FullChargedCapacity')
+    try:
+        out = subprocess.run(['powershell', '-NoProfile', '-Command', cmd],
+                             capture_output=True, text=True, timeout=30).stdout.strip()
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return int(out) / 1000 if out.isdigit() else None
+
+
 def docker_reader(container):
     def parse(line):  # -> (memory GB, CPU %); lines carry ANSI clear codes
         m = re.search(r'([\d.]+)\s*([KMGT]?i?B)\s*/.*\|\s*([\d.]+)%', line)
@@ -179,6 +194,9 @@ def main():
     csv_path = out / f'resources_{stamp}.csv'
     summary_path = out / f'resources_{stamp}_summary.json'
 
+    full_charge_wh = battery_full_charge_wh()
+    if full_charge_wh:
+        print(f'Battery full-charge capacity: {full_charge_wh} Wh', flush=True)
     battery = battery_reader(args.interval)
     docker = docker_reader(args.container) if args.container else None
     native = None if docker else NativeOllama()
@@ -225,6 +243,7 @@ def main():
         if rows:
             summary = {'command': command, 'interval_s': args.interval,
                        'container': args.container or None,
+                       'battery_full_charge_wh': full_charge_wh,
                        'samples_csv': str(csv_path),
                        'per_model': summarize(rows, args.interval)}
             summary_path.write_text(json.dumps(summary, indent=2), encoding='utf-8')
