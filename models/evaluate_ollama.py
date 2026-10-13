@@ -11,8 +11,12 @@ Uses lm-evaluation-harness prompts/scorers with Ollama chat wrapping. This
 is a local chat-based evaluation configuration, not an exact reproduction
 of model-card scores. No RAG, no tools, no answer-key feedback or retries.
 Task defaults control few-shot examples, generation budget, and stop strings.
-Thinking is disabled. Task-requested textual reasoning (e.g. MMLU-Pro CoT)
-can still occur in the answer. Run from the host/WSL, outside Docker.
+Thinking is disabled by default. Task-requested textual reasoning (e.g.
+MMLU-Pro CoT) can still occur in the answer. --think enables thinking with
+Qwen's recommended sampling (greedy decoding can loop while thinking) and adds
+--think-budget tokens to each task's generation budget; only the final answer
+is scored. Non-thinking-only models (instruct-2507) refuse --think.
+Run from the host/WSL, outside Docker.
 Initial dependency/dataset downloads need internet; inference stays local.
 """
 import argparse
@@ -31,17 +35,26 @@ from lm_eval import evaluator
 from lm_eval.api.model import LM
 
 MODELS = ['qwen3.5:4b', 'qwen3:4b-instruct-2507-q4_K_M', 'qwen3:8b']
+# Qwen's recommended thinking-mode sampling. Seeded, so runs still repeat.
+THINK_SAMPLING = {'temperature': 0.6, 'top_p': 0.95, 'top_k': 20, 'min_p': 0.0}
 
 def save_json(path, data):
     path.write_text(json.dumps(data, indent=2, default=str), encoding='utf-8')
 
+def can_think(model):
+    # Ollama lists 'thinking' for instruct-2507 too, so its capabilities
+    # field can't be trusted here; the 2507 instruct release never thinks.
+    return 'instruct-2507' not in model
+
 class OllamaLM(LM):
-    def __init__(self, model, base_url, context, log_path):
+    def __init__(self, model, base_url, context, log_path, think=False, think_budget=0):
         super().__init__()
         self.model = model
         self.base_url = base_url.rstrip('/')
         self.context = context
         self.log_path = log_path
+        self.think = think
+        self.think_budget = think_budget
         self.session = requests.Session()
 
     def loglikelihood(self, requests):
@@ -59,25 +72,29 @@ class OllamaLM(LM):
                 stops = [stops]
             stops = [s for s in stops if s]
             budget = int(kwargs.get('max_gen_toks', 2048))
+            if self.think:
+                budget += self.think_budget  # Thinking tokens count against num_predict.
             if budget >= self.context:
                 raise ValueError('Generation budget must be smaller than context.')
+            options = {'num_ctx': self.context, 'num_predict': budget,
+                       'temperature': float(kwargs.get('temperature', 0.0)),
+                       'seed': 42, 'stop': stops}
+            if self.think:
+                options.update(THINK_SAMPLING)
             payload = {
                 'model': self.model,
                 'messages': [{'role': 'user', 'content': prompt}],
                 'stream': False,
                 'keep_alive': '10m',
-                'options': {
-                    'num_ctx': self.context, 'num_predict': budget,
-                    'temperature': float(kwargs.get('temperature', 0.0)),
-                    'seed': 42, 'stop': stops,
-                },
+                'options': options,
             }
-            if 'instruct-2507' not in self.model:
-                payload['think'] = False
+            if can_think(self.model):
+                payload['think'] = self.think
             start = time.perf_counter()
             try:
-                response = self.session.post(self.base_url + '/api/chat',
-                                             json=payload, timeout=(10, 1800))
+                # CPU inference can run ~1 token/s; scale the read timeout.
+                response = self.session.post(self.base_url + '/api/chat', json=payload,
+                                             timeout=(10, max(1800, 600 + budget)))
                 response.raise_for_status()
                 data = response.json()
                 if data.get('error'):
@@ -117,6 +134,10 @@ def main():
     parser.add_argument('--context', type=int, default=16384)
     parser.add_argument('--base-url', default='http://127.0.0.1:11434')
     parser.add_argument('--out', default='benchmark_results')
+    parser.add_argument('--think', action='store_true',
+                        help='Enable thinking mode (hybrid models only).')
+    parser.add_argument('--think-budget', type=int, default=4096,
+                        help='Extra tokens per answer for thinking (with --think).')
     args = parser.parse_args()
     if args.limit is not None and args.limit < 1:
         parser.error('--limit must be positive')
@@ -124,7 +145,11 @@ def main():
         parser.error('--context must be at least 4096')
     if urlparse(args.base_url).hostname not in ('localhost', '127.0.0.1', '::1'):
         parser.error('This starter permits only a loopback/local Ollama server.')
-    root = Path(args.out) / datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+    if args.think and not all(can_think(m) for m in args.models):
+        parser.error('--think given for a non-thinking model: '
+                     + ', '.join(m for m in args.models if not can_think(m)))
+    stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+    root = Path(args.out) / (stamp + ('_think' if args.think else ''))
     root.mkdir(parents=True)
     def get(path):
         r = requests.get(args.base_url.rstrip('/') + path, timeout=15)
@@ -140,7 +165,9 @@ def main():
         'python': platform.python_version(), 'ollama': get('/api/version'),
         'model_tags_and_digests': tags,
         'harness_version': importlib.metadata.version('lm_eval'),
-        'protocol': 'Harness task prompts as one user message; Ollama template; thinking off',
+        'protocol': 'Harness task prompts as one user message; Ollama template; '
+                    + (f'thinking on (+{args.think_budget} tokens, {THINK_SAMPLING})'
+                       if args.think else 'thinking off'),
         'note': 'Latency includes model loading when cold. Not TTFT or RAM measurement.'})
     freeze = subprocess.run([__import__('sys').executable, '-m', 'pip', 'freeze'],
                             capture_output=True, text=True, check=True)
@@ -154,7 +181,8 @@ def main():
         save_json(folder / 'model_details.json', r.json())
         print(f'Running {model}: {args.tasks}', flush=True)
         result = evaluator.simple_evaluate(
-            model=OllamaLM(model, args.base_url, args.context, folder / 'requests.jsonl'),
+            model=OllamaLM(model, args.base_url, args.context, folder / 'requests.jsonl',
+                           think=args.think, think_budget=args.think_budget),
             tasks=args.tasks, limit=args.limit, batch_size=1,
             log_samples=True, bootstrap_iters=0,
             random_seed=42, numpy_random_seed=42, torch_random_seed=42,
