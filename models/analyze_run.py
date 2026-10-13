@@ -10,6 +10,8 @@ while that model was answering. Each model's window runs from its first
 request's start to its last request's end, using Ollama's timestamps, so
 harness start-up and dataset loading are excluded.
 
+Peak power is the highest battery reading in the window; the firmware
+averages over several seconds, so short spikes are smoothed out.
 Energy per token = average power x window length / generated tokens. It
 includes prompt processing, and needs the laptop on battery for the whole
 window. --baseline-w (idle power from a standalone monitor run) is subtracted
@@ -119,6 +121,8 @@ def analyze_model(records, samples, baseline_w):
     caps = [s['battery_mwh'] for s in window if s['battery_mwh'] is not None]
     out.update({
         'power_w_avg': round(avg_w, 2),
+        # Peak of the battery's few-second averages, not an instantaneous peak.
+        'power_w_peak': round(max(powers), 2),
         'energy_wh': round(energy_j / 3600, 3),
         'energy_wh_battery_capacity_drop': (round((caps[0] - caps[-1]) / 1000, 3)
                                             if len(caps) > 1 else None),

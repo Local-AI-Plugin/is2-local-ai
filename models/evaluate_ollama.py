@@ -117,6 +117,11 @@ class OllamaLM(LM):
             if data.get('prompt_eval_count', 0) >= self.context - budget:
                 raise RuntimeError('Context headroom exhausted. Increase --context '
                                    'and rerun all models using that setting.')
+            # A server or template that ignores think=false, or thinking left
+            # in the answer text, would be scored as part of the answer.
+            if '<think>' in answer or (not self.think and data['message'].get('thinking')):
+                raise RuntimeError('Thinking output found in a response; see the logged '
+                                   'response. Check the model template and Ollama version.')
             if data.get('done_reason') == 'length':
                 print('WARNING: output budget reached; inspect logged response.', flush=True)
             for stop in stops:
