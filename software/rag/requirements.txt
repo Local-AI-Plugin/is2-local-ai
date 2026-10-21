@@ -1,0 +1,11 @@
+# Versions the pipeline was verified with (Python 3.12.10, Windows, CPU).
+# Install torch first: pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+torch==2.14.1
+sentence-transformers==6.1.0
+transformers==5.20.1
+tokenizers==0.23.3
+huggingface-hub==1.33.0
+faiss-cpu==1.15.1
+pypdf==6.21.1
+numpy==2.5.4
+requests==2.34.2
