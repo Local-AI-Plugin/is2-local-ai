@@ -1,5 +1,7 @@
 # Model Evaluation Plan
 
+Results so far: [model-evaluation-results.md](model-evaluation-results.md).
+
 ## Purpose
 
 Choose the starting language model for the Local AI Plug-In by measuring, for each candidate:
