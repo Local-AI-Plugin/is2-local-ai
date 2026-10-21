@@ -10,6 +10,11 @@ while that model was answering. Each model's window runs from its first
 request's start to its last request's end, using Ollama's timestamps, so
 harness start-up and dataset loading are excluded.
 
+Starting RAM (system and container) is the average of the samples in the 10 s
+before the first request, before the model loads; the increase is the
+window's peak minus that. When RAM is nearly full, Windows pages other apps
+out, so the system RAM increase can understate what the model needs.
+
 Peak power is the highest battery reading in the window; the firmware
 averages over several seconds, so short spikes are smoothed out.
 Energy per token = average power x window length / generated tokens. It
@@ -25,6 +30,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 
+STARTING_RAM_S = 10  # Seconds of samples before a model's first request.
 
 def parse_utc(text):
     # Ollama writes nanoseconds; fromisoformat accepts at most microseconds.
@@ -106,10 +112,28 @@ def analyze_model(records, samples, baseline_w):
         vals = [s[key] for s in window if s[key] is not None]
         return round(max(vals), 2) if vals else None
 
+    # Starting RAM: samples in the STARTING_RAM_S seconds before the first
+    # request. Model loading counts as part of that request, so these come
+    # before the model is in memory.
+    before = [s for s in samples if start - STARTING_RAM_S <= s['utc'].timestamp() < start]
+
+    def starting(key):
+        vals = [s[key] for s in before if s[key] is not None]
+        return round(sum(vals) / len(vals), 2) if vals else None
+
+    def increase(peak_val, start_val):
+        return round(peak_val - start_val, 2) if None not in (peak_val, start_val) else None
+
     cpu = [s['ollama_cpu_pct'] for s in window if s['ollama_cpu_pct'] is not None]
+    mem_peak, mem_start = peak('ollama_mem_gb'), starting('ollama_mem_gb')
+    ram_peak, ram_start = peak('system_ram_used_gb'), starting('system_ram_used_gb')
     out.update({
-        'ollama_mem_gb_peak': peak('ollama_mem_gb'),
-        'system_ram_used_gb_peak': peak('system_ram_used_gb'),
+        'ollama_mem_gb_start': mem_start,
+        'ollama_mem_gb_peak': mem_peak,
+        'ollama_mem_gb_increase': increase(mem_peak, mem_start),
+        'system_ram_used_gb_start': ram_start,
+        'system_ram_used_gb_peak': ram_peak,
+        'system_ram_used_gb_increase': increase(ram_peak, ram_start),
         'ollama_cpu_pct_avg': round(sum(cpu) / len(cpu), 1) if cpu else None,
     })
     powers = [s['power_w'] for s in window if s['power_w'] is not None]

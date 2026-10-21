@@ -44,7 +44,7 @@ All three scripts are in [`models/`](../../models/). Run them from the repositor
 
 - **Accuracy:** IFEval prompt-level and instruction-level, strict and loose.
 - **Speed:** generation and prompt tokens/s, average output tokens and seconds per answer, model load time, answers that hit the token limit.
-- **Resources:** peak container memory, peak system RAM, average container CPU.
+- **Resources:** starting, peak and increase for both container memory and system RAM, plus average container CPU. "Starting" is the average of the 10 s before the first request, before the model loads.
 - **Energy (battery runs only):** average and peak power, total Wh (with the battery's charge drop as a cross-check), joules per output token, Wh per answer, and the same figures with the idle baseline subtracted.
 
 Only text-generation tasks work (`ifeval`, `gsm8k`, `mmlu_pro`). The adapter cannot read token probabilities, so multiple-choice tasks scored that way (classic `mmlu`, `hellaswag`, `arc`) will not run.
