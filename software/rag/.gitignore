@@ -1,0 +1,4 @@
+# Corpus, downloaded models, built index and run logs stay local.
+data/
+models/
+logs/
