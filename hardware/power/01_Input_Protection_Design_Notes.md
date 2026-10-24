@@ -62,6 +62,13 @@ F1 is backup protection for the PMS board and cable. It is not battery protectio
 | Breaking capacity | ≥ BMS short-circuit current at 60 V | [TBD] | Get the BMS short-circuit trip level from the JBD spec |
 | I²t | Above the pre-charge pulse I²t (§7) | [TBD] | Check once C_IN and R_PRE are fixed |
 
+**Selected (schematic F1): Littelfuse 0885002.DR**: Nano2 885 series, 2 A, 500 V DC, 100 A breaking capacity at 500 V DC, melting I²t ≈ 4.7 A²s [MFR, littelfuse.com product page; one distributor lists 350 V DC, so confirm on the datasheet].
+
+- Voltage ✓ (500 V DC ≫ 60 V).
+- Current: 2 A is below the 3 A target. Worst-case continuous draw is 0.96 A, about 48% of rating. That is OK only if the fuse's temperature derating and the ROCK's input-side load peaks (≈1.4 A at 40 V for 4.5 A out) stay inside the time-current curve. [TBD] Check against the 885 derating and time-current curves. Use 0885003 (3 A) if the margin is thin.
+- Breaking capacity: 100 A must exceed the current the BMS lets through before its short-circuit trip. [TBD] JBD SCP setting.
+- Footprint FUSC10948X488N (pads 4.91 × 3.41 mm at ±4.195 mm). [TBD] Compare with the Littelfuse recommended land pattern.
+
 The fuse should only blow if the TPS48111 or the FETs fail short. Normal overcurrent is handled by the controller's OCP/SCP settings (§5).
 
 ---
@@ -74,7 +81,8 @@ The fuse should only blow if the TPS48111 or the FETs fail short. Normal overcur
 | Clamp at the expected surge current | < 100 V | [MFR] Abs max on VS/CS±; also the FET VDS limit |
 | Placement | J1/F1 side, before RSNS; short, wide loop to PGND | [MFR] §9.5 |
 
-Candidate class: a **60 V-standoff unidirectional TVS** (e.g. SMBJ60A / SMCJ60A family) [TBD — verify on the chosen vendor's datasheet]. Typical JEDEC values for this class are VBR(min) ≈ 66.7 V and VC ≈ 96.8 V **at the full rated pulse current**.
+**Selected (schematic D1): Littelfuse 5.0SMDJ60A**: 5000 W, unidirectional, DO-214AB (SMC). VRWM 60 V, VBR 66.7–73.7 V @ 1 mA, VC 96.8 V @ IPP 51.7 A (10/1000 µs), IR 5 µA @ 60 V [MFR, Littelfuse product page + RS; confirm on the datasheet table]. Wired correctly: cathode on `VIN_RAW` (after F1), anode on the return.
+Footprint DIOM7959X262N (pads 3.15 × 2.20 mm at ±3.5 mm), consistent with an SMC body. [TBD] Check against the Littelfuse land pattern.
 
 **Margin check:** 96.8 V vs 100 V abs max leaves only ~3%, and only at the rated pulse current. In this system the realistic surge is the cable-inductance kick when the FETs turn off under a short circuit (E = ½·L·I², tens of µJ for ~1 µH and ≤ 10 A). At that low current the TVS clamps nearer VBR (~70–75 V), well inside 100 V. **[TBD] confirm with an LTspice/TINA run using the real cable length and ISC setting.**
 
@@ -170,7 +178,7 @@ Specific part numbers: TBD.
 
 ## 10. J1 footprint verification checklist (Molex 43045-0213)
 
-Read from `Libraries/430450213/CONN_SD-43045-005_02_MOL.PcbLib` (SnapEDA source):
+Read from `Libraries/4304502131/CONN_SD-43045-005_02_MOL.PcbLib` (SnapEDA source):
 
 | Feature | Footprint has | Check against the Molex drawing | ✓ |
 |---|---|---|---|

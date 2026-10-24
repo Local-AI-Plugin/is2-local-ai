@@ -1,0 +1,10 @@
+# Altium local backups and preview caches (regenerated automatically)
+History/
+__Previews/
+*.SchDocPreview
+*.PcbDocPreview
+Project Logs for */
+Project Outputs for */
+
+# Downloaded library archives (keep only the extracted Altium files)
+Libraries/*.zip
