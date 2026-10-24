@@ -1,0 +1,11 @@
+FILE_TYPE = MULTI_PHYS_TABLE;
+
+PART 'TPS48111LQDGXRQ1'
+CLASS = IC
+{========================================================================================}
+:"MANUFACTURER_NAME", "MANUFACTURER_PART_NUMBER"= "PART_NUMBER", "JEDEC_TYPE", "PACK_TYPE", "MOUSER_PART_NUMBER", "MOUSER_PRICE/STOCK", "ARROW_PART_NUMBER", "ARROW_PRICE/STOCK", "DESCRIPTION", "DATASHEET", "HEIGHT";
+{========================================================================================}
+ "Texas Instruments", "TPS48111LQDGXRQ1" (!) = "", "TPS48111LQDGXRQ1", "Other", "595-TPS48111LQDGXRQ1", "https://www.mouser.co.uk/ProductDetail/Texas-Instruments/TPS48111LQDGXRQ1?qs=amGC7iS6iy%2Faisrr5sZ5WQ%3D%3D", "TPS48111LQDGXRQ1", "https://www.arrow.com/en/products/tps48111lqdgxrq1/texas-instruments.html?utm_currency=USD&region=nac", "TPS4811-Q1 100V Automotive Smart High-Side Driver With Protection and Diagnostics , 3.5V ~ 80V , 4A , 19-VSSOP ,-40C ~ 125C (TA)", "https://www.ti.com/lit/gpn/tps4811-q1", "1.1 mm"
+END_PART
+
+END.

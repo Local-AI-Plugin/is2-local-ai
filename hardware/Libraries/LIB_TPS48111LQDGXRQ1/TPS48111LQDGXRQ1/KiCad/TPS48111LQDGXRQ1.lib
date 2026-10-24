@@ -1,0 +1,42 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#SamacSys ECAD Model TPS48111LQDGXRQ1
+#/17310594/2207123/2.50/19/3/Integrated Circuit
+DEF TPS48111LQDGXRQ1 IC 0 30 Y Y 1 F N
+F0 "IC" 1150 300 50 H V L CNN
+F1 "TPS48111LQDGXRQ1" 1150 200 50 H V L CNN
+F2 "TPS48111LQDGXRQ1" 1150 100 50 H I L CNN
+F3 "https://www.ti.com/lit/gpn/tps4811-q1" 1150 0 50 H I L CNN
+F4 "TPS4811-Q1 100V Automotive Smart High-Side Driver With Protection and Diagnostics , 3.5V ~ 80V , 4A , 19-VSSOP ,-40C ~ 125C (TA)" 1150 -100 50 H I L CNN "Description"
+F5 "1.1" 1150 -200 50 H I L CNN "Height"
+F6 "Texas Instruments" 1150 -300 50 H I L CNN "Manufacturer_Name"
+F7 "TPS48111LQDGXRQ1" 1150 -400 50 H I L CNN "Manufacturer_Part_Number"
+F8 "595-TPS48111LQDGXRQ1" 1150 -500 50 H I L CNN "Mouser Part Number"
+F9 "https://www.mouser.co.uk/ProductDetail/Texas-Instruments/TPS48111LQDGXRQ1?qs=amGC7iS6iy%2Faisrr5sZ5WQ%3D%3D" 1150 -600 50 H I L CNN "Mouser Price/Stock"
+F10 "TPS48111LQDGXRQ1" 1150 -700 50 H I L CNN "Arrow Part Number"
+F11 "https://www.arrow.com/en/products/tps48111lqdgxrq1/texas-instruments.html?utm_currency=USD&region=nac" 1150 -800 50 H I L CNN "Arrow Price/Stock"
+DRAW
+X EN/UVLO 1 0 0 200 R 50 50 0 0 P
+X INP_G 2 0 -100 200 R 50 50 0 0 P
+X INP 3 0 -200 200 R 50 50 0 0 P
+X ~FLT_T 4 0 -300 200 R 50 50 0 0 P
+X ~FLT_I 5 0 -400 200 R 50 50 0 0 P
+X GND 6 0 -500 200 R 50 50 0 0 P
+X IMON 7 0 -600 200 R 50 50 0 0 P
+X IWRN 8 0 -700 200 R 50 50 0 0 P
+X TMR 9 0 -800 200 R 50 50 0 0 P
+X DIODE 10 0 -900 200 R 50 50 0 0 P
+X G 11 1300 -800 200 L 50 50 0 0 P
+X BST 12 1300 -700 200 L 50 50 0 0 P
+X SRC 13 1300 -600 200 L 50 50 0 0 P
+X PD 14 1300 -500 200 L 50 50 0 0 P
+X PU 15 1300 -400 200 L 50 50 0 0 P
+X CS- 17 1300 -300 200 L 50 50 0 0 P
+X CS+ 18 1300 -200 200 L 50 50 0 0 P
+X ISCP 19 1300 -100 200 L 50 50 0 0 P
+X VS 20 1300 0 200 L 50 50 0 0 P
+P 5 0 1 6 200 100 1100 100 1100 -1000 200 -1000 200 100 N
+ENDDRAW
+ENDDEF
+#
+#End Library

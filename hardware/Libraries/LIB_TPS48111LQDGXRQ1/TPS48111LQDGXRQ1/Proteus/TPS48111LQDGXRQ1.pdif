@@ -1,0 +1,212 @@
+;Proteus Design Interchange Format
+(PDIF
+ (vendor "SamacSys Limited")
+ (version 1 0)
+ (library
+  (part "TPS48111LQDGXRQ1"
+   (description "TPS4811-Q1 100V Automotive Smart High-Side Driver With Protection and Diagnostics , 3.5V ~ 80V , 4A , 19-VSSOP ,-40C ~ 125C (TA)")
+   (family "ANA")
+   (package "TPS48111LQDGXRQ1")
+   (attribute "Datasheet Link" "https://www.ti.com/lit/gpn/tps4811-q1")
+   (attribute "Geometry.Height" "1.1mm")
+   (attribute "Manufacturer_Name" "Texas Instruments")
+   (attribute "Manufacturer_Part_Number" "TPS48111LQDGXRQ1")
+   (attribute "Mouser Part Number" "595-TPS48111LQDGXRQ1")
+   (attribute "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Texas-Instruments/TPS48111LQDGXRQ1?qs=amGC7iS6iy%2Faisrr5sZ5WQ%3D%3D")
+   (attribute "Arrow Part Number" "TPS48111LQDGXRQ1")
+   (attribute "Arrow Price/Stock" "https://www.arrow.com/en/products/tps48111lqdgxrq1/texas-instruments.html?utm_currency=USD&region=nac")
+   (gate
+    (symbol "TPS48111LQDGXRQ1")
+    (pin "EN/UVLO" 1 PS)
+    (pin "INP_G" 2 PS)
+    (pin "INP" 3 PS)
+    (pin "$FLT_T$" 4 PS)
+    (pin "$FLT_I$" 5 PS)
+    (pin "GND" 6 PS)
+    (pin "IMON" 7 PS)
+    (pin "IWRN" 8 PS)
+    (pin "TMR" 9 PS)
+    (pin "DIODE" 10 PS)
+    (pin "G" 11 PS)
+    (pin "BST" 12 PS)
+    (pin "SRC" 13 PS)
+    (pin "PD" 14 PS)
+    (pin "PU" 15 PS)
+    (pin "CS-" 17 PS)
+    (pin "CS+" 18 PS)
+    (pin "ISCP" 19 PS)
+    (pin "VS" 20 PS)
+   )
+  )
+  (symbol "TPS48111LQDGXRQ1"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 200 100) (pt 1100 100) (pt 1100 -1000) (pt 200 -1000) (pt 200 100) (closed))
+   )
+   (terminal
+    (body (symbol "PIN") (pt 0 0) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -100) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -200) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -300) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -400) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -500) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -600) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -700) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -800) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 0 -900) (rot 0) (mir 0) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 1300 -800) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 1300 -700) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 1300 -600) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 1300 -500) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 1300 -400) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 1300 -300) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 1300 -200) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 1300 -100) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 1300 0) (rot 0) (mir X) (visible true))
+    (name (pt 230 0) (rot 0) (just MIDDLE LEFT) (visible true))
+    (number (pt 140 20) (rot 0) (just BOTTOM RIGHT) (visible true)))
+  )
+  (symbol "PIN"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 200 0))))
+  (symbol "PINSHORT"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 100 0))))
+  (package "TPS48111LQDGXRQ1"
+   (units MM)
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt -1.5 2.55)
+      (pt 1.5 2.55)
+      (pt 1.5 -2.55)
+      (pt -1.5 -2.55)
+      (pt -1.5 2.55))))
+   (layer OCCA
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt -3.925 3.55)
+      (pt 3.925 3.55)
+      (pt 3.925 -3.55)
+      (pt -3.925 -3.55)
+      (pt -3.925 3.55))))
+   (layer TSLK
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt -3.4 2.25)
+      (arc (pt -3.400 2.250) (pt -3.500 2.200) (pt -3.400 2.300) (start 180.0) (sweep .0))
+      (pt -3.5 2.25)
+      (arc (pt -3.500 2.250) (pt -3.500 2.200) (pt -3.400 2.300) (start 180.0) (sweep 180.0))
+      (pt -3.4 2.25))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt -1.2 2.55)
+      (pt 1.2 2.55))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt -1.2 -2.55)
+      (pt 1.2 -2.55))))
+   (leg 1 (pt -2.200 2.250) (padstack 0))
+   (leg 2 (pt -2.200 1.750) (padstack 0))
+   (leg 3 (pt -2.200 1.250) (padstack 0))
+   (leg 4 (pt -2.200 0.750) (padstack 0))
+   (leg 5 (pt -2.200 0.250) (padstack 0))
+   (leg 6 (pt -2.200 -0.250) (padstack 0))
+   (leg 7 (pt -2.200 -0.750) (padstack 0))
+   (leg 8 (pt -2.200 -1.250) (padstack 0))
+   (leg 9 (pt -2.200 -1.750) (padstack 0))
+   (leg 10 (pt -2.200 -2.250) (padstack 0))
+   (leg 11 (pt 2.200 -2.250) (padstack 0))
+   (leg 12 (pt 2.200 -1.750) (padstack 0))
+   (leg 13 (pt 2.200 -1.250) (padstack 0))
+   (leg 14 (pt 2.200 -0.750) (padstack 0))
+   (leg 15 (pt 2.200 -0.250) (padstack 0))
+   (leg 17 (pt 2.200 0.750) (padstack 0))
+   (leg 18 (pt 2.200 1.250) (padstack 0))
+   (leg 19 (pt 2.200 1.750) (padstack 0))
+   (leg 20 (pt 2.200 2.250) (padstack 0))
+   (padstack 0
+    (plated false)
+    (pad (layer TCOP) (rectf 0.300 1.450 0 0 0.000))
+   )
+   (model "TPS48111LQDGXRQ1.stp"
+    (euler 90 0 90)
+    (offset 0 0 0.5799999833106995)
+   )
+  )
+ )
+)
