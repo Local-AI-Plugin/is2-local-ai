@@ -1,0 +1,119 @@
+;Proteus Design Interchange Format
+(PDIF
+ (vendor "SamacSys Limited")
+ (version 1 0)
+ (library
+  (part "5.0SMDJ60A"
+   (description "96.8V Clamp 51.7A Ipp Tvs Diode Surface Mount DO-214AB (SMCJ)")
+   (family "DIO")
+   (package "DIOM7959X262N")
+   (attribute "Datasheet Link" "https://www.littelfuse.com/media?resourcetype=datasheets&itemid=2b2f4a8c-2e81-4894-8d41-3d748bb79e68&filename=littelfuse-tvs-diode-5-0smdj-datasheet")
+   (attribute "Geometry.Height" "2.62mm")
+   (attribute "Manufacturer_Name" "LITTELFUSE")
+   (attribute "Manufacturer_Part_Number" "5.0SMDJ60A")
+   (attribute "Mouser Part Number" "576-5.0SMDJ60A")
+   (attribute "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Littelfuse/5.0SMDJ60A?qs=ZSIFh4sPSRrxBM5elXyXAQ%3D%3D")
+   (attribute "Arrow Part Number" "5.0SMDJ60A")
+   (attribute "Arrow Price/Stock" "https://www.arrow.com/en/products/5-0smdj60a/littelfuse.html?utm_currency=USD&region=asia")
+   (gate
+    (symbol "5.0SMDJ60A")
+    (pin "K" 1 PS)
+    (pin "A" 2 PS)
+   )
+  )
+  (symbol "5.0SMDJ60A"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 200 0) (pt 400 100) (pt 400 -100) (pt 200 0) (closed))
+   )
+   (graphic
+    (stroke 10)
+    (path (pt 200 -80) (pt 240 -100))
+   )
+   (graphic
+    (stroke 10)
+    (path (pt 200 -80) (pt 200 80))
+   )
+   (graphic
+    (stroke 10)
+    (path (pt 160 100) (pt 200 80))
+   )
+   (terminal
+    (body (symbol "PIN") (pt 0 0) (rot 0) (mir 0) (visible true))
+    (name (pt 0 -20) (rot 0) (just TOP LEFT) (visible false))
+    (number (pt 0 20) (rot 0) (just BOTTOM LEFT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 600 0) (rot 0) (mir X) (visible true))
+    (name (pt 0 -20) (rot 0) (just TOP LEFT) (visible false))
+    (number (pt 0 20) (rot 0) (just BOTTOM LEFT) (visible true)))
+  )
+  (symbol "PIN"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 200 0))))
+  (symbol "PINSHORT"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 100 0))))
+  (package "DIOM7959X262N"
+   (units MM)
+   (layer OCCA
+    (graphic
+     (stroke 0.05)
+     (path
+      (closed true)
+      (pt -4.85 3.36)
+      (pt 4.85 3.36)
+      (pt 4.85 -3.36)
+      (pt -4.85 -3.36)
+      (pt -4.85 3.36))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt -3.97 2.952)
+      (pt 3.97 2.952)
+      (pt 3.97 -2.952)
+      (pt -3.97 -2.952)
+      (pt -3.97 2.952))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed false)
+      (pt -3.97 1.852)
+      (pt -2.87 2.952))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt 3.97 2.952)
+      (pt -4.6 2.952))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt -3.97 -2.952)
+      (pt 3.97 -2.952))))
+   (leg 1 (pt -3.5 0) (padstack 0))
+   (leg 2 (pt 3.5 0) (padstack 0))
+   (padstack 0
+    (plated false)
+    (pad (layer TCOP) (rectf 2.2 3.15 0 0 90))
+   )
+   (model "5.0SMDJ60A.stp"
+    (euler 90 0 0)
+    (offset 0 0 0)
+   )
+  )
+ )
+)
