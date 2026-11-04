@@ -1,0 +1,68 @@
+(Japanese_coding: sjis)
+(function "ECS_1194652"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2019-11-26-11:02:16)
+    (utime 2023-06-20-11:16:04)
+    (interface
+        (port "1" (symbPinId 1) (portType INOUT))
+        (port "2" (symbPinId 2) (portType INOUT))
+    )
+    (property "symbolName" "0885002_DR")
+)
+
+
+(pinAssign "ECS_1194652"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2019-11-26-11:02:16)
+    (utime 2023-06-20-11:16:04)
+    (interface
+        (port "1" (symbPinId 1) (portName "1") (portType INOUT))
+        (port "2" (symbPinId 2) (portName "2") (portType INOUT))
+    )
+    (internal
+        (funcInst (functionRef "ECS_1194652")
+                (port "1" (match "1"))
+                (port "2" (match "2"))
+        )
+    )
+    (property "usePowerBox" "No")
+    (property "symbolName" "0885002_DR")
+)
+
+
+(part "0885002_DR"
+    (uver 1)
+    (cuser "SamacSys")
+    (uuser "SamacSys")
+    (ctime 2019-11-26-11:02:16)
+    (utime 2023-06-20-11:16:04)
+    (packageRef "0885002_DR")
+    (pinAssignRef "ECS_1194652")
+    (interface
+        (port "1" (symbPinId 1) (portName "1") (portType INOUT))
+        (port "2" (symbPinId 2) (portName "2") (portType INOUT))
+    )
+    (partClass UNDEF)
+    (useInSchema Y)
+    (useInLayout Y)
+    (inPartsList Y)
+    (partType NORMAL)
+    (placeRestriction FREE)
+    (property "enetNonSeries" "YES")
+    (property "refDesPrefix" "F")
+    (property "description" "FUSE 500V HBC NANO2 PB-FREE 2A")
+    (property "Manufacturer_Name" "LITTELFUSE")
+    (property "Manufacturer_Part_Number" "0885002.DR")
+    (property "Mouser_Part_Number" "576-0885002.DR")
+    (property "Mouser_Price/Stock" "https://www.mouser.co.uk/ProductDetail/Littelfuse/0885002DR?qs=r5DSvlrkXmJ9HpdhRI%2F6Zg%3D%3D")
+    (property "Arrow_Part_Number" "0885002.DR")
+    (property "Arrow_Price/Stock" "https://www.arrow.com/en/products/0885002.dr/littelfuse")
+    (property "Datasheet_Link" "https://cdn1-originals.webdamdb.com/12956_127233717?cache=1638230044&response-content-disposition=inline;filename=Littelfuse_Fuse_885_Datasheet.pdf&response-content-type=application/pdf&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cCo6Ly9jZG4xLW9yaWdpbm")
+    (property "compAreaTopHeight" 4.88)
+)
+
+

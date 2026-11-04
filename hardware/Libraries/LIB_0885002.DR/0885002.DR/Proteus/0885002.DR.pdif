@@ -1,0 +1,97 @@
+;Proteus Design Interchange Format
+(PDIF
+ (vendor "SamacSys Limited")
+ (version 1 0)
+ (library
+  (part "0885002.DR"
+   (description "FUSE 500V HBC NANO2 PB-FREE 2A")
+   (family "FUS")
+   (package "FUSC10948X488N")
+   (attribute "Datasheet Link" "https://cdn1-originals.webdamdb.com/12956_127233717?cache=1638230044&response-content-disposition=inline;filename=Littelfuse_Fuse_885_Datasheet.pdf&response-content-type=application/pdf&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cCo6Ly9jZG4xLW9yaWdpbm")
+   (attribute "Geometry.Height" "4.88mm")
+   (attribute "Manufacturer_Name" "LITTELFUSE")
+   (attribute "Manufacturer_Part_Number" "0885002.DR")
+   (attribute "Mouser Part Number" "576-0885002.DR")
+   (attribute "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Littelfuse/0885002DR?qs=r5DSvlrkXmJ9HpdhRI%2F6Zg%3D%3D")
+   (attribute "Arrow Part Number" "0885002.DR")
+   (attribute "Arrow Price/Stock" "https://www.arrow.com/en/products/0885002.dr/littelfuse")
+   (gate
+    (symbol "0885002.DR")
+    (pin "1" 1 PS)
+    (pin "2" 2 PS)
+   )
+  )
+  (symbol "0885002.DR"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 200 50) (pt 500 50) (pt 500 -50) (pt 200 -50) (pt 200 50) (closed))
+   )
+   (graphic
+    (stroke 10)
+    (path (pt 200 0) (pt 500 0))
+   )
+   (terminal
+    (body (symbol "PIN") (pt 0 0) (rot 0) (mir 0) (visible true))
+    (name (pt 0 -10) (rot 0) (just TOP LEFT) (visible false))
+    (number (pt 0 10) (rot 0) (just BOTTOM LEFT) (visible true)))
+   (terminal
+    (body (symbol "PIN") (pt 700 0) (rot 0) (mir X) (visible true))
+    (name (pt 0 -10) (rot 0) (just TOP LEFT) (visible false))
+    (number (pt 0 10) (rot 0) (just BOTTOM LEFT) (visible true)))
+  )
+  (symbol "PIN"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 200 0))))
+  (symbol "PINSHORT"
+   (units THOU)
+   (origin (pt 0 0))
+   (graphic
+    (stroke 10)
+    (path (pt 0 0) (pt 100 0))))
+  (package "FUSC10948X488N"
+   (units MM)
+   (layer OCCA
+    (graphic
+     (stroke 0.05)
+     (path
+      (closed true)
+      (pt -6.15 2.705)
+      (pt 6.15 2.705)
+      (pt 6.15 -2.705)
+      (pt -6.15 -2.705)
+      (pt -6.15 2.705))))
+   (layer TASM
+    (graphic
+     (stroke 0.1)
+     (path
+      (closed true)
+      (pt -5.43 2.39)
+      (pt 5.43 2.39)
+      (pt 5.43 -2.39)
+      (pt -5.43 -2.39)
+      (pt -5.43 2.39))))
+   (layer TSLK
+    (graphic
+     (stroke 0.2)
+     (path
+      (closed false)
+      (pt 0 2.29)
+      (pt 0 -2.29))))
+   (leg 1 (pt -4.195 0) (padstack 0))
+   (leg 2 (pt 4.195 0) (padstack 0))
+   (padstack 0
+    (plated false)
+    (pad (layer TCOP) (rectf 3.41 4.91 0 0 90))
+   )
+   (model "0885002.DR.stp"
+    (euler 0 0 0)
+    (offset 0 0 0)
+   )
+  )
+ )
+)

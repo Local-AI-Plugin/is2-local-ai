@@ -1,0 +1,18 @@
+.5.0SMDJ60A :1 ;96.8V Clamp 51.7A Ipp Tvs Diode Surface Mount DO-214AB (SMCJ)
+DIOM7959X262N
+*STM D
+*NGS
+*PLB 1="K" 2="A"
+*MXP 2
+*DFN 5.0SMDJ60A
+~!Manufacturer_Name (LITTELFUSE)
+~!Manufacturer_Part_Number (5.0SMDJ60A)
+~!Mouser Part Number (576-5.0SMDJ60A)
+~!Link Mouser Price/Stock (https://www.mouser.co.uk/ProductDetail/Littelfuse/5.0SMDJ60A?qs=ZSIFh4sPSRrxBM5elXyXAQ%3D%3D)
+~!Arrow Part Number (5.0SMDJ60A)
+~!Link Arrow Price/Stock (https://www.arrow.com/en/products/5-0smdj60a/littelfuse.html?utm_currency=USD&region=asia)
+~!Link Datasheet (https://www.littelfuse.com/media?resourcetype=datasheets&itemid=2b2f4a8c-2e81-4894-8d41-3d748bb79e68&filename=littelfuse-tvs-diode-5-0smdj-datasheet)
+~!Height (2.62mm)
+~!3D_Model (5.0SMDJ60A)
+"5.0SMDJ60A"
+1.1!U 2.1!U 

@@ -1,0 +1,28 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#SamacSys ECAD Model 5.0SMDJ60A
+#/1478064/2207123/2.50/2/3/TVS Diode (Uni-directional)
+DEF 5.0SMDJ60A D 0 30 Y Y 1 F N
+F0 "D" 400 350 50 H V L BNN
+F1 "5.0SMDJ60A" 400 250 50 H V L BNN
+F2 "DIOM7959X262N" 400 150 50 H I L BNN
+F3 "https://www.littelfuse.com/media?resourcetype=datasheets&itemid=2b2f4a8c-2e81-4894-8d41-3d748bb79e68&filename=littelfuse-tvs-diode-5-0smdj-datasheet" 400 50 50 H I L BNN
+F4 "96.8V Clamp 51.7A Ipp Tvs Diode Surface Mount DO-214AB (SMCJ)" 400 -50 50 H I L BNN "Description"
+F5 "2.62" 400 -150 50 H I L BNN "Height"
+F6 "LITTELFUSE" 400 -250 50 H I L BNN "Manufacturer_Name"
+F7 "5.0SMDJ60A" 400 -350 50 H I L BNN "Manufacturer_Part_Number"
+F8 "576-5.0SMDJ60A" 400 -450 50 H I L BNN "Mouser Part Number"
+F9 "https://www.mouser.co.uk/ProductDetail/Littelfuse/5.0SMDJ60A?qs=ZSIFh4sPSRrxBM5elXyXAQ%3D%3D" 400 -550 50 H I L BNN "Mouser Price/Stock"
+F10 "5.0SMDJ60A" 400 -650 50 H I L BNN "Arrow Part Number"
+F11 "https://www.arrow.com/en/products/5-0smdj60a/littelfuse.html?utm_currency=USD&region=asia" 400 -750 50 H I L BNN "Arrow Price/Stock"
+DRAW
+X ~ 1 0 0 200 R 50 50 0 0 P
+X ~ 2 600 0 200 L 50 50 0 0 P
+P 4 0 1 6 200 0 400 100 400 -100 200 0 N
+P 2 0 1 6 200 -80 240 -100 N
+P 2 0 1 6 200 -80 200 80 N
+P 2 0 1 6 160 100 200 80 N
+ENDDRAW
+ENDDEF
+#
+#End Library
