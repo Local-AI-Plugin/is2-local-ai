@@ -58,7 +58,12 @@ def load_samples(path):
                  'battery_mwh': num(r.get('battery_mwh')),
                  'ollama_mem_gb': num(r.get('ollama_mem_gb')),
                  'ollama_cpu_pct': num(r.get('ollama_cpu_pct')),
-                 'system_ram_used_gb': num(r.get('system_ram_used_gb'))}
+                 'system_ram_used_gb': num(r.get('system_ram_used_gb')),
+                 # Linux dev-board columns; blank (None) in laptop CSVs.
+                 'soc_temp_c': num(r.get('soc_temp_c')),
+                 'cpu_temp_max_c': num(r.get('cpu_temp_max_c')),
+                 'cpu_mhz_min': num(r.get('cpu_mhz_min')),
+                 'big_cpu_mhz_min': num(r.get('big_cpu_mhz_min'))}
                 for r in csv.DictReader(f)]
 
 
@@ -136,9 +141,23 @@ def analyze_model(records, samples, baseline_w):
         'system_ram_used_gb_increase': increase(ram_peak, ram_start),
         'ollama_cpu_pct_avg': round(sum(cpu) / len(cpu), 1) if cpu else None,
     })
+    if any(s['soc_temp_c'] is not None for s in window):
+        mhz = [s['cpu_mhz_min'] for s in window if s['cpu_mhz_min'] is not None]
+        big = [s['big_cpu_mhz_min'] for s in window if s['big_cpu_mhz_min'] is not None]
+        out.update({
+            'soc_temp_c_start': starting('soc_temp_c'),
+            'soc_temp_c_peak': peak('soc_temp_c'),
+            'cpu_temp_max_c_peak': peak('cpu_temp_max_c'),
+            # Lowest clock of any cluster; below its max means throttling.
+            'cpu_mhz_min': round(min(mhz)) if mhz else None,
+            # Big-core clusters only (CSV column added after the first board run).
+            'big_cpu_mhz_min': round(min(big)) if big else None,
+            'big_cpu_mhz_avg': round(sum(big) / len(big)) if big else None,
+        })
     powers = [s['power_w'] for s in window if s['power_w'] is not None]
     if not all(s['on_ac'] is False for s in window) or not powers:
-        out['power'] = 'laptop on AC for part of this window; no energy figures'
+        out['power'] = ('no battery power readings in this window (on AC, or no '
+                        'battery); no energy figures')
         return out
     avg_w = sum(powers) / len(powers)
     energy_j = avg_w * seconds
