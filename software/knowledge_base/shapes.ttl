@@ -1,0 +1,14 @@
+@prefix ex: <https://example.org/local-ai/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:TaskShape a sh:NodeShape ;
+    sh:targetClass ex:Task ;
+    sh:targetClass ex:OfflineTask ;
+    sh:property [ sh:path rdfs:label ; sh:minCount 1 ;
+                  sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path ex:status ; sh:minCount 1 ; sh:maxCount 1 ;
+                  sh:in ( "open" "completed" "blocked" ) ] ;
+    sh:property [ sh:path ex:supportedBy ; sh:minCount 1 ;
+                  sh:nodeKind sh:IRI ] .

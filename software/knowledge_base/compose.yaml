@@ -1,0 +1,17 @@
+services:
+  fuseki:
+    build:
+      context: .
+      args:
+        JENA_VERSION: "6.2.0"
+    ports:
+      - "127.0.0.1:3030:3030"
+    volumes:
+      - kg-data:/work/databases
+      - kg-run:/work/run
+    mem_limit: 1g
+    cpus: 1.0
+    restart: unless-stopped
+volumes:
+  kg-data:
+  kg-run:
