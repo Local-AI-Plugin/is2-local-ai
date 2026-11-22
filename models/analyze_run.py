@@ -15,6 +15,12 @@ before the first request, before the model loads; the increase is the
 window's peak minus that. When RAM is nearly full, Windows pages other apps
 out, so the system RAM increase can understate what the model needs.
 
+On the RK3588 NPU run, the CSV also has NPU columns; the report then adds
+NPU temperature (start / average / peak, like the SoC), average NPU clock, and
+the interrupts each NPU core handled in the window (proof the NPU did the
+work). The devfreq NPU load is not reported: on this kernel it reads 100
+constantly.
+
 Peak power is the highest battery reading in the window; the firmware
 averages over several seconds, so short spikes are smoothed out.
 Energy per token = average power x window length / generated tokens. It
@@ -63,7 +69,13 @@ def load_samples(path):
                  'soc_temp_c': num(r.get('soc_temp_c')),
                  'cpu_temp_max_c': num(r.get('cpu_temp_max_c')),
                  'cpu_mhz_min': num(r.get('cpu_mhz_min')),
-                 'big_cpu_mhz_min': num(r.get('big_cpu_mhz_min'))}
+                 'big_cpu_mhz_min': num(r.get('big_cpu_mhz_min')),
+                 # RK3588 NPU columns; absent (None) in older CSVs.
+                 'npu_temp_c': num(r.get('npu_temp_c')),
+                 'gpu_temp_c': num(r.get('gpu_temp_c')),
+                 'npu_mhz': num(r.get('npu_mhz')),
+                 'npu_load_pct': num(r.get('npu_load_pct')),
+                 **{f'npu_irq_core{i}': num(r.get(f'npu_irq_core{i}')) for i in range(3)}}
                 for r in csv.DictReader(f)]
 
 
@@ -153,6 +165,20 @@ def analyze_model(records, samples, baseline_w):
             # Big-core clusters only (CSV column added after the first board run).
             'big_cpu_mhz_min': round(min(big)) if big else None,
             'big_cpu_mhz_avg': round(sum(big) / len(big)) if big else None,
+        })
+    if any(s['npu_irq_core0'] is not None for s in window):
+        npu_t = [s['npu_temp_c'] for s in window if s['npu_temp_c'] is not None]
+        npu_mhz = [s['npu_mhz'] for s in window if s['npu_mhz'] is not None]
+        irq = {}
+        for i in range(3):
+            vals = [s[f'npu_irq_core{i}'] for s in window if s[f'npu_irq_core{i}'] is not None]
+            irq[f'core{i}'] = int(vals[-1] - vals[0]) if len(vals) > 1 else None
+        out.update({
+            'npu_temp_c_start': starting('npu_temp_c'),
+            'npu_temp_c_avg': round(sum(npu_t) / len(npu_t), 1) if npu_t else None,
+            'npu_temp_c_peak': peak('npu_temp_c'),
+            'npu_mhz_avg': round(sum(npu_mhz) / len(npu_mhz)) if npu_mhz else None,
+            'npu_interrupts_in_window': irq,
         })
     powers = [s['power_w'] for s in window if s['power_w'] is not None]
     if not all(s['on_ac'] is False for s in window) or not powers:

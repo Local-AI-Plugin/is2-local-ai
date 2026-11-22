@@ -12,6 +12,14 @@ Ollama memory/CPU: read from `docker stats` for --container (default
 local-ai-ollama), because a containerized server runs inside the Docker WSL2
 VM where Windows process tools cannot see it. Pass --container "" for a native
 Ollama install; its processes are then measured with psutil instead.
+--process <name> measures the processes running a program or script whose path ends in <name>
+instead (e.g. --process rkllm_server.py for the NPU server, a Python process).
+
+On the RK3588 it also logs the NPU: its temperature (npu-thermal zone; the
+GPU zone too), clock and load (devfreq), and each NPU core's interrupt count
+(/proc/interrupts, cumulative). Rising interrupt counts show that inference is
+really running on the NPU cores. (On this BSP kernel the devfreq load reads
+100 all the time, so it is logged but not relied on.)
 
 Power comes from the laptop battery (Windows WMI BatteryStatus) and is
 whole-system power, screen included. It is only reported while unplugged; on
@@ -22,6 +30,7 @@ every several seconds, so treat power_w as a coarse trace and energy_wh
 import argparse
 import csv
 import json
+import os
 import re
 import subprocess
 import sys
@@ -36,7 +45,8 @@ import requests
 FIELDS = ['utc', 'elapsed_s', 'loaded_model', 'ollama_model_size_gb',
           'ollama_mem_gb', 'ollama_cpu_pct', 'system_ram_used_gb',
           'system_ram_pct', 'cpu_pct', 'on_ac', 'power_w', 'battery_mwh',
-          'soc_temp_c', 'cpu_temp_max_c', 'cpu_mhz_min', 'big_cpu_mhz_min']
+          'soc_temp_c', 'cpu_temp_max_c', 'cpu_mhz_min', 'big_cpu_mhz_min',
+          'npu_temp_c', 'gpu_temp_c', 'npu_mhz', 'npu_load_pct', 'npu_irq_core0', 'npu_irq_core1', 'npu_irq_core2']
 UNITS = {'B': 1, 'KIB': 2**10, 'MIB': 2**20, 'GIB': 2**30, 'TIB': 2**40,
          'KB': 1e3, 'MB': 1e6, 'GB': 1e9, 'TB': 1e12}
 
@@ -107,14 +117,22 @@ class NativeOllama:
     """psutil fallback for a non-Docker Ollama. Walking every process is slow
     (seconds on Windows), so the PID list is refreshed only periodically."""
 
-    def __init__(self):
-        self.procs, self.last_scan = [], 0
+    def __init__(self, match=None):
+        self.procs, self.last_scan, self.match = [], 0, match
+
+    def _wanted(self, p):
+        if self.match:  # The process running this script, e.g. the Python NPU server.
+            # Only the program or its first argument counts, so shells whose
+            # command text merely mentions the script are not measured.
+            return (p.pid != os.getpid()
+                    and any(a.endswith(self.match) for a in (p.info['cmdline'] or [])[:2]))
+        return ('llama' in (p.info['name'] or '').lower()
+                and 'ollama app' not in p.info['name'].lower())
 
     def sample(self):
         if time.monotonic() - self.last_scan > 15:
-            self.procs = [p for p in psutil.process_iter(['name'])
-                          if 'llama' in (p.info['name'] or '').lower()
-                          and 'ollama app' not in p.info['name'].lower()]
+            self.procs = [p for p in psutil.process_iter(['name', 'cmdline'])
+                          if self._wanted(p)]
             self.last_scan = time.monotonic()
         mem = cpu = 0
         for p in self.procs:
@@ -164,6 +182,29 @@ def read_thermals(zones):
             min(c for top, c in clusters if top == fastest) / 1000)
 
 
+NPU_DEVFREQ = Path('/sys/class/devfreq/fdab0000.npu')
+
+
+def read_npu():
+    """RK3588 only -> (NPU MHz, NPU load %, [interrupt count per NPU core]).
+    All None elsewhere. The interrupt counts are cumulative since boot."""
+    mhz = load = None
+    try:
+        mhz = int((NPU_DEVFREQ / 'cur_freq').read_text()) / 1e6
+        load = int((NPU_DEVFREQ / 'load').read_text().split('@')[0])  # "37@1000000000Hz"
+    except (OSError, ValueError):
+        pass
+    irqs = []
+    try:
+        for line in Path('/proc/interrupts').read_text().splitlines():
+            if 'fdab0000.npu' in line:
+                irqs.append(sum(int(x) for x in line.split(':', 1)[1].split()
+                                if x.isdigit()))
+    except OSError:
+        pass
+    return mhz, load, irqs
+
+
 def loaded_model(base_url):
     try:
         models = requests.get(base_url + '/api/ps', timeout=2).json().get('models', [])
@@ -210,6 +251,7 @@ def summarize(rows, interval):
             'cpu_temp_max_c_peak': stat('cpu_temp_max_c', max),
             'cpu_mhz_min': stat('cpu_mhz_min', min),
             'big_cpu_mhz_min': stat('big_cpu_mhz_min', min),
+            'npu_temp_c_peak': stat('npu_temp_c', max),
             'energy_wh_from_capacity': (round(sum(d for _, _, d in items) / 1000, 2)
                                         if on_battery else None),
             'on_battery_whole_time': on_battery,
@@ -224,6 +266,9 @@ def main():
     parser.add_argument('--base-url', default='http://127.0.0.1:11434')
     parser.add_argument('--container', default='local-ai-ollama',
                         help='Ollama Docker container; "" for a native install.')
+    parser.add_argument('--process', default=None,
+                        help='Measure the processes running a program/script whose path '
+                             'ends in this (instead of Ollama), e.g. rkllm_server.py.')
     parser.add_argument('--out', default='benchmark_results')
     parser.add_argument('command', nargs=argparse.REMAINDER,
                         help='Command to run and monitor, after "--".')
@@ -242,7 +287,7 @@ def main():
         print(f'Battery full-charge capacity: {full_charge_wh} Wh', flush=True)
     battery = battery_reader(args.interval)
     docker = docker_reader(args.container) if args.container else None
-    native = None if docker else NativeOllama()
+    native = None if docker else NativeOllama(args.process)
     zones = thermal_zones()
     child = subprocess.Popen(command) if command else None
     psutil.cpu_percent(interval=None)  # First call primes the counter.
@@ -260,6 +305,10 @@ def main():
                 on_ac, discharge_mw, remaining_mwh = (battery and battery.latest) or (None,) * 3
                 vm = psutil.virtual_memory()
                 soc_c, cpu_c, cpu_mhz, big_mhz = read_thermals(zones) if zones else (None,) * 4
+                npu_mhz, npu_load, npu_irqs = read_npu()
+                zone_c = lambda name: (int(zones[name].read_text()) / 1000
+                                       if name in zones else None)
+                npu_irqs = (npu_irqs + [None] * 3)[:3]
                 row = {
                     'utc': datetime.now(timezone.utc).isoformat(timespec='seconds'),
                     'elapsed_s': round(tick - start, 2),
@@ -278,6 +327,13 @@ def main():
                     'cpu_temp_max_c': cpu_c,
                     'cpu_mhz_min': cpu_mhz,
                     'big_cpu_mhz_min': big_mhz,
+                    'npu_temp_c': zone_c('npu-thermal'),
+                    'gpu_temp_c': zone_c('gpu-thermal'),
+                    'npu_mhz': npu_mhz,
+                    'npu_load_pct': npu_load,
+                    'npu_irq_core0': npu_irqs[0],
+                    'npu_irq_core1': npu_irqs[1],
+                    'npu_irq_core2': npu_irqs[2],
                 }
                 rows.append(row)
                 writer.writerow(row)
