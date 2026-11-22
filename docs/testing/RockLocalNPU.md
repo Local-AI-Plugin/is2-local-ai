@@ -17,6 +17,36 @@ Results of the NPU V&V run defined in [model-vnv-npu.md](model-vnv-npu.md). The 
 - **Less memory and cooler running.** Peak model memory was 5.59 GB (against 6.95 GB). The SoC peaked at 61.9 °C and the NPU at 60.1 °C. The fan ran at full speed only 10% of the time, against 53% on the CPU.
 - **The board passes every V&V check,** but speed and accuracy only just pass. The CPU remains the faster option for generation. The NPU's advantages are prompt processing, free CPU and lower memory.
 
+## Overall: NPU compared with CPU
+
+On what this test measures, answer quality and how fast answers are written, **the NPU did worse than the CPU**. It did better on efficiency: it left the CPU free, used less memory and ran cooler. For now the CPU is the better choice for generating answers. The NPU is not ruled out, because it ran well below Rockchip's published speed, and two further tests could change the picture.
+
+### Benefits of the NPU
+
+| Benefit | NPU | CPU | Why it matters |
+|---|---:|---:|---|
+| Faster prompt processing | 22.4 tokens/s | 15.8 tokens/s | RAG prompts carry retrieved documents, so the wait before the first word is shorter |
+| Leaves the CPU free | 9% CPU | 92% CPU | The RAG search, knowledge base and rest of the plug-in can run at the same time |
+| Less memory | 5.6 GB | 7.0 GB | More headroom on a 12 GB board, or room for a larger context |
+| Runs cooler | Fan at full 10% of the time | Fan at full 53% of the time | Less heat and fan noise in a closed case, and probably less power (not yet measured) |
+| Faster model load | 30 s | 47 s | Quicker start-up |
+
+### Shortfalls of the NPU
+
+| Shortfall | NPU | CPU | Why it matters |
+|---|---:|---:|---|
+| Slower generation | 3.02 tokens/s | 4.45 tokens/s | Answers take longer to write: 91 s on average against 63 s |
+| Lower accuracy | 70% (14/20) | 85% (17/20) | Only just meets the 70% target. The 8-bit NPU model followed formatting instructions less reliably |
+| More sensitive to other load | 1.3 tokens/s with one big core busy | Little effect | RKLLM still does part of each token on the 4 big cores, so other software on those cores slows it down |
+| Different model file | w8a8, third-party conversion | Q4_K_M, the same file as the laptop | Answers are not identical to the CPU's, and the conversion has not been reproduced by this project |
+| Fewer tools | RKLLM only, through a custom server | Ollama | Ollama cannot use the NPU, so the plug-in would need the custom server or another RKLLM front end |
+
+### What would change the verdict
+
+1. **A run with the desktop closed.** Rockchip lists 6.2 tokens/s for this model. If the NPU gets close to that without the desktop, it would be faster than the CPU as well as more efficient.
+2. **A test with RAG-sized prompts** (1,000–4,000 tokens). The NPU's faster prompt processing should count for more there, and the total time per answer could favour the NPU.
+3. **A power measurement.** If the NPU uses clearly less energy per answer, that may matter more for the device than raw speed.
+
 ## Results
 
 ### NPU compared with the CPU-with-fan run (first 20 IFEval prompts, thinking off)
