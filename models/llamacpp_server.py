@@ -46,7 +46,7 @@ def utc_now():
 
 
 def ollama_model(models_dir, tag):
-    """-> (GGUF blob path, Ollama manifest digest) for an Ollama tag like qwen3.5:4b."""
+    """-> (GGUF blob path, blob digest, Ollama model ID, Ollama config) for a tag like qwen3.5:4b."""
     name, _, version = tag.partition(':')
     manifest = models_dir / 'manifests/registry.ollama.ai/library' / name / (version or 'latest')
     data = json.loads(manifest.read_text())
@@ -59,7 +59,9 @@ def ollama_model(models_dir, tag):
               if l['mediaType'] == 'application/vnd.docker.distribution.manifest.v2+json']
     digest = (nested[0].split(':', 1)[1] if nested
               else hashlib.sha256(manifest.read_bytes()).hexdigest())
-    return blob, layer['digest'].split(':', 1)[1], digest
+    # The config blob holds the size and quantization Ollama reports (e.g. 1.9B, Q4_K_M).
+    config = json.loads((models_dir / 'blobs' / data['config']['digest'].replace(':', '-')).read_text())
+    return blob, layer['digest'].split(':', 1)[1], digest, config
 
 
 def file_sha256(path):
@@ -194,7 +196,7 @@ def main():
     ap.add_argument('--log', help='Append llama-server container logs here on unload.')
     args = ap.parse_args()
 
-    blob, blob_digest, manifest_digest = ollama_model(args.ollama_models_dir, args.ollama_model)
+    blob, blob_digest, manifest_digest, config = ollama_model(args.ollama_models_dir, args.ollama_model)
     print(f'Checking {blob.name} ...', flush=True)
     actual = file_sha256(blob)
     if actual != blob_digest:
@@ -202,8 +204,9 @@ def main():
     image_id = subprocess.run(['docker', 'image', 'inspect', '-f', '{{.Id}}', args.image],
                               capture_output=True, text=True, check=True).stdout.strip()
     runner = Runner(args, blob)
-    details = {'format': 'gguf', 'family': 'qwen35', 'parameter_size': '4.2B',
-               'quantization_level': 'Q4_K_M', 'runner': 'llama.cpp-vulkan-gpu',
+    details = {'format': config.get('model_format', 'gguf'), 'family': config.get('model_family'),
+               'parameter_size': config.get('model_type'),
+               'quantization_level': config.get('file_type'), 'runner': 'llama.cpp-vulkan-gpu',
                'context_length': args.context}
     tag = {'name': args.name, 'model': args.name, 'size': blob.stat().st_size,
            'digest': manifest_digest, 'model_blob_sha256': actual, 'details': details}
