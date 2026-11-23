@@ -276,7 +276,9 @@ def main():
     parser.add_argument("command", choices=["ingest", "search", "ask", "baseline"])
     parser.add_argument("question", nargs="?")
     parser.add_argument("--k", type=int, default=5)
-    parser.add_argument("--server", default="http://127.0.0.1:11434")
+    # OLLAMA_URL lets the Docker stack point at its own Ollama service.
+    parser.add_argument("--server",
+                        default=os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434"))
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--context-size", type=int, default=4096)
     args = parser.parse_args()
