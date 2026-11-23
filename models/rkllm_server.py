@@ -20,6 +20,15 @@ CPU run (presence_penalty 1.5 from the qwen3.5 Modelfile) are passed through
 --presence-penalty. Stop strings are not enforced here (IFEval sends none); the
 evaluator also cuts answers at stop strings itself.
 
+Messages: a single user message (IFEval), or a system message then a user
+message (the RAG pipeline, software/rag/rag.py). A system message is applied
+with rkllm_set_chat_template in Qwen's ChatML layout, the layout Ollama's
+qwen3.5 template renders (with the empty think block when thinking is off); a
+request without one uses the model's built-in template (the model is reloaded
+if a system template was set before). The .rkllm tokenizer counts a few percent
+more tokens than Qwen's Hugging Face tokenizer on long RAG prompts, so
+prompt_eval_count can be slightly above a client's own preflight count.
+
   python models/rkllm_server.py --model ~/rkllm/models/qwen3.5-4b_w8a8_rk3588.rkllm \
       --lib ~/rkllm/librkllmrt.so --name qwen3.5:4b-w8a8-npu --port 11436
 
@@ -188,7 +197,10 @@ class Runtime:
         self.lib.rkllm_run.argtypes = [C.c_void_p, C.POINTER(RKLLMInput),
                                        C.POINTER(RKLLMInferParam), C.c_void_p]
         self.lib.rkllm_destroy.argtypes = [C.c_void_p]
+        self.lib.rkllm_set_chat_template.argtypes = [C.c_void_p, C.c_char_p, C.c_char_p,
+                                                     C.c_char_p]
         self.handle = None
+        self.template = None  # None = the model's built-in chat template.
         self.loaded_at = None
         self.lock = threading.Lock()
         self.cb = CALLBACK(self._on_result)  # Keep a reference; C holds the pointer.
@@ -238,18 +250,45 @@ class Runtime:
         if ret != 0:
             raise RuntimeError(f'rkllm_init failed ({ret})')
         self.handle, self.loaded_at = handle, utc_now()
+        self.template = None
         return time.perf_counter() - start
+
+    def _destroy(self):
+        if self.handle is not None:
+            self.lib.rkllm_destroy(self.handle)
+            self.handle = None
 
     def unload(self):
         with self.lock:
-            if self.handle is not None:
-                self.lib.rkllm_destroy(self.handle)
-                self.handle = None
+            self._destroy()
 
-    def chat(self, prompt, max_new, think, presence_penalty):
+    def _use_system(self, system, think):
+        """Apply a system prompt (ChatML), or go back to the built-in template.
+
+        A custom template turns off RKLLM's own enable_thinking handling, so with
+        thinking off the postfix carries the empty think block that the built-in
+        template (and Ollama's qwen3.5 renderer) would add.
+        """
+        if system is None:
+            if self.template is not None:
+                self._destroy()  # The built-in template can only be restored by reloading.
+            return
+        want = (f'<|im_start|>system\n{system}<|im_end|>\n', '<|im_start|>user\n',
+                '<|im_end|>\n<|im_start|>assistant\n' + ('' if think else '<think>\n\n</think>\n\n'))
+        if want != self.template:
+            ret = self.lib.rkllm_set_chat_template(self.handle, *(w.encode() for w in want))
+            if ret != 0:
+                raise RuntimeError(f'rkllm_set_chat_template failed ({ret})')
+            self.template = want
+
+    def chat(self, prompt, max_new, think, presence_penalty, system=None):
         with self.lock:
             t0 = time.perf_counter()
+            if system is None and self.template is not None:
+                self._use_system(None, think)
             load_s = self.load()
+            if system is not None:
+                self._use_system(system, think)
             sp = RKLLMSamplingParam(top_k=1, top_p=1.0, temperature=1.0,
                                     repeat_penalty=self.args.repeat_penalty,
                                     frequency_penalty=0.0,
@@ -355,8 +394,11 @@ def main():
             if req.get('model') != args.name:
                 return self.send({'error': f"model '{req.get('model')}' not found"}, 404)
             msgs = req.get('messages') or []
-            if len(msgs) != 1 or msgs[0].get('role') != 'user':
-                return self.send({'error': 'only a single user message is supported'}, 400)
+            roles = [m.get('role') for m in msgs]
+            if roles not in (['user'], ['system', 'user']):
+                return self.send({'error': 'only [user] or [system, user] messages are supported'},
+                                 400)
+            system = msgs[0]['content'] if roles[0] == 'system' else None
             opts = req.get('options') or {}
             if opts.get('num_ctx', args.context) != args.context:
                 return self.send({'error': f'num_ctx must equal server --context {args.context}'}, 400)
@@ -367,8 +409,8 @@ def main():
                 return self.send({'error': f'num_predict > server --max-new-tokens'}, 400)
             try:
                 answer, out, load_s, total_s = rt.chat(
-                    msgs[0]['content'], max_new, bool(req.get('think', False)),
-                    float(opts.get('presence_penalty', args.presence_penalty)))
+                    msgs[-1]['content'], max_new, bool(req.get('think', False)),
+                    float(opts.get('presence_penalty', args.presence_penalty)), system)
             except Exception as exc:  # Report, never hide, a failed run.
                 return self.send({'error': str(exc)}, 500)
             perf = out['perf'] or {}
@@ -376,7 +418,9 @@ def main():
             self.send({
                 'model': args.name, 'created_at': utc_now(),
                 'message': {'role': 'assistant', 'content': answer},
-                'done': True, 'done_reason': 'length' if gen >= max_new else 'stop',
+                # RKLLM's generate_tokens stops one short of max_new_tokens when the cap
+                # is hit (seen as 511 of 512 in the RAG runs), so treat max_new - 1 as the cap.
+                'done': True, 'done_reason': 'length' if gen >= max_new - 1 else 'stop',
                 'total_duration': int(total_s * 1e9), 'load_duration': int(load_s * 1e9),
                 'prompt_eval_count': perf.get('prefill_tokens', 0),
                 'prompt_eval_duration': int(perf.get('prefill_time_ms', 0) * 1e6),

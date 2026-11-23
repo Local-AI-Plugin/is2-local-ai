@@ -17,6 +17,8 @@ TOKENIZER_REPOS = {
     "qwen3.5:2b-q4_K_M": "Qwen/Qwen3.5-2B",
     "qwen3.5:2b": "Qwen/Qwen3.5-2B",
     "qwen3.5:4b": "Qwen/Qwen3.5-4B",
+    # The RK3588 NPU model served by models/rkllm_server.py (same tokenizer as Qwen3.5-2B).
+    "qwen3.5:2b-w8a8-npu": "Qwen/Qwen3.5-2B",
 }
 
 
