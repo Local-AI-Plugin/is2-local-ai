@@ -19,7 +19,8 @@ On the RK3588 it also logs the NPU: its temperature (npu-thermal zone; the
 GPU zone too), clock and load (devfreq), and each NPU core's interrupt count
 (/proc/interrupts, cumulative). Rising interrupt counts show that inference is
 really running on the NPU cores. (On this BSP kernel the devfreq load reads
-100 all the time, so it is logged but not relied on.)
+100 all the time, so it is logged but not relied on.) The Mali GPU's clock and
+load (devfreq, which does track real use) are logged too, for the GPU run.
 
 Power comes from the laptop battery (Windows WMI BatteryStatus) and is
 whole-system power, screen included. It is only reported while unplugged; on
@@ -46,7 +47,7 @@ FIELDS = ['utc', 'elapsed_s', 'loaded_model', 'ollama_model_size_gb',
           'ollama_mem_gb', 'ollama_cpu_pct', 'system_ram_used_gb',
           'system_ram_pct', 'cpu_pct', 'on_ac', 'power_w', 'battery_mwh',
           'soc_temp_c', 'cpu_temp_max_c', 'cpu_mhz_min', 'big_cpu_mhz_min',
-          'npu_temp_c', 'gpu_temp_c', 'npu_mhz', 'npu_load_pct', 'npu_irq_core0', 'npu_irq_core1', 'npu_irq_core2']
+          'npu_temp_c', 'gpu_temp_c', 'gpu_mhz', 'gpu_load_pct', 'npu_mhz', 'npu_load_pct', 'npu_irq_core0', 'npu_irq_core1', 'npu_irq_core2']
 UNITS = {'B': 1, 'KIB': 2**10, 'MIB': 2**20, 'GIB': 2**30, 'TIB': 2**40,
          'KB': 1e3, 'MB': 1e6, 'GB': 1e9, 'TB': 1e12}
 
@@ -183,6 +184,16 @@ def read_thermals(zones):
 
 
 NPU_DEVFREQ = Path('/sys/class/devfreq/fdab0000.npu')
+GPU_DEVFREQ = Path('/sys/class/devfreq/fb000000.gpu')
+
+
+def read_gpu():
+    """RK3588 only -> (GPU MHz, GPU load %). None elsewhere."""
+    try:
+        return (int((GPU_DEVFREQ / 'cur_freq').read_text()) / 1e6,
+                int((GPU_DEVFREQ / 'load').read_text().split('@')[0]))  # "37@300000000Hz"
+    except (OSError, ValueError):
+        return None, None
 
 
 def read_npu():
@@ -306,6 +317,7 @@ def main():
                 vm = psutil.virtual_memory()
                 soc_c, cpu_c, cpu_mhz, big_mhz = read_thermals(zones) if zones else (None,) * 4
                 npu_mhz, npu_load, npu_irqs = read_npu()
+                gpu_mhz, gpu_load = read_gpu()
                 zone_c = lambda name: (int(zones[name].read_text()) / 1000
                                        if name in zones else None)
                 npu_irqs = (npu_irqs + [None] * 3)[:3]
@@ -329,6 +341,8 @@ def main():
                     'big_cpu_mhz_min': big_mhz,
                     'npu_temp_c': zone_c('npu-thermal'),
                     'gpu_temp_c': zone_c('gpu-thermal'),
+                    'gpu_mhz': gpu_mhz,
+                    'gpu_load_pct': gpu_load,
                     'npu_mhz': npu_mhz,
                     'npu_load_pct': npu_load,
                     'npu_irq_core0': npu_irqs[0],

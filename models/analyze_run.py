@@ -21,6 +21,10 @@ the interrupts each NPU core handled in the window (proof the NPU did the
 work). The devfreq NPU load is not reported: on this kernel it reads 100
 constantly.
 
+When the CSV has GPU columns (Mali, RK3588), it adds GPU temperature
+(start / average / peak), average GPU load and clock, and the share of samples
+with the GPU busy (load above 10%).
+
 Peak power is the highest battery reading in the window; the firmware
 averages over several seconds, so short spikes are smoothed out.
 Energy per token = average power x window length / generated tokens. It
@@ -73,6 +77,8 @@ def load_samples(path):
                  # RK3588 NPU columns; absent (None) in older CSVs.
                  'npu_temp_c': num(r.get('npu_temp_c')),
                  'gpu_temp_c': num(r.get('gpu_temp_c')),
+                 'gpu_mhz': num(r.get('gpu_mhz')),
+                 'gpu_load_pct': num(r.get('gpu_load_pct')),
                  'npu_mhz': num(r.get('npu_mhz')),
                  'npu_load_pct': num(r.get('npu_load_pct')),
                  **{f'npu_irq_core{i}': num(r.get(f'npu_irq_core{i}')) for i in range(3)}}
@@ -179,6 +185,18 @@ def analyze_model(records, samples, baseline_w):
             'npu_temp_c_peak': peak('npu_temp_c'),
             'npu_mhz_avg': round(sum(npu_mhz) / len(npu_mhz)) if npu_mhz else None,
             'npu_interrupts_in_window': irq,
+        })
+    if any(s['gpu_load_pct'] is not None for s in window):
+        gl = [s['gpu_load_pct'] for s in window if s['gpu_load_pct'] is not None]
+        gm = [s['gpu_mhz'] for s in window if s['gpu_mhz'] is not None]
+        gt = [s['gpu_temp_c'] for s in window if s['gpu_temp_c'] is not None]
+        out.update({
+            'gpu_temp_c_start': starting('gpu_temp_c'),
+            'gpu_temp_c_avg': round(sum(gt) / len(gt), 1) if gt else None,
+            'gpu_temp_c_peak': peak('gpu_temp_c'),
+            'gpu_load_pct_avg': round(sum(gl) / len(gl), 1),
+            'gpu_busy_share_pct': round(100 * sum(v > 10 for v in gl) / len(gl), 1),
+            'gpu_mhz_avg': round(sum(gm) / len(gm)) if gm else None,
         })
     powers = [s['power_w'] for s in window if s['power_w'] is not None]
     if not all(s['on_ac'] is False for s in window) or not powers:
