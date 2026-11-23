@@ -1,0 +1,13 @@
+[Unit]
+Description=Lock Rock 5T CPU, memory, NPU and GPU clocks at maximum
+# Run after the drivers have created their clock controls.
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/rock5t-max-clocks.sh apply
+ExecStop=/usr/local/sbin/rock5t-max-clocks.sh reset
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
