@@ -1,0 +1,10 @@
+# Install as /etc/logrotate.d/pms. The power log grows about 25 MB per day.
+/var/log/pms/power.jsonl {
+    daily
+    rotate 14
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}

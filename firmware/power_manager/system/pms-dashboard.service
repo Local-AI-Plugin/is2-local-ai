@@ -1,0 +1,17 @@
+[Unit]
+Description=PMS live power dashboard (web page on port 8080)
+After=network-online.target pms-power.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/pms
+# Keep these equal to pms-power.service
+Environment=PMS_PACK_WH=500
+Environment=PMS_V_SHUTDOWN=42.0
+Environment=PMS_DASH_PORT=8080
+ExecStart=/usr/bin/python3 -m firmware.power_manager.dashboard
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target

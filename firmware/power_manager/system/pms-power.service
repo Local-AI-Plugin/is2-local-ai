@@ -1,0 +1,21 @@
+[Unit]
+Description=PMS power manager (reads the LTC2945 monitors over I2C; caps CPU/NPU clocks in manage mode)
+After=multi-user.target rock5t-max-clocks.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/pms
+# monitor = read and log only, clocks untouched (default). manage = also cap the clocks.
+Environment=PMS_MODE=monitor
+Environment=PMS_I2C_BUS=3
+Environment=PMS_PACK_WH=500
+Environment=PMS_V_FULL=57.6
+Environment=PMS_V_SHUTDOWN=42.0
+Environment=PMS_STATE_DIR=/run/pms/ai_state.d
+ExecStart=/usr/bin/python3 -m firmware.power_manager.power_manager
+Restart=always
+RestartSec=2
+User=root
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PMS power</title>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--tile:#efede6;--text:#1f1e1c;--muted:#5f5e5a;--faint:#888780;--border:rgba(0,0,0,.12);
+--accent:#185FA5;--accent-bg:#E6F1FB;--good:#3B6D11;--good-bg:#EAF3DE;--warn:#854F0B;--warn-bg:#FAEEDA;--bad:#A32D2D;--bad-bg:#FCEBEB;--line:#378ADD}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1c1a;--card:#262624;--tile:#30302d;--text:#ecebe6;--muted:#b4b2a9;--faint:#888780;--border:rgba(255,255,255,.14);
+--accent:#85B7EB;--accent-bg:#0C447C;--good:#C0DD97;--good-bg:#27500A;--warn:#FAC775;--warn-bg:#633806;--bad:#F7C1C1;--bad-bg:#791F1F;--line:#85B7EB}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+h1{font-size:18px;font-weight:600;margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:12px}
+.tile{background:var(--tile);border-radius:10px;padding:12px 14px}
+.lab{font-size:13px;color:var(--muted)}
+.val{font-size:26px;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums}
+.val.sm{font-size:20px}
+.small{font-size:12px;color:var(--faint);margin-top:2px;font-variant-numeric:tabular-nums}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.levels{display:flex;gap:6px;margin-top:10px}
+.lv{flex:1;min-width:0;height:34px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted);white-space:nowrap}
+.lv.on{background:var(--accent-bg);color:var(--accent);border-color:var(--accent);font-weight:600}
+.pill{font-size:13px;padding:4px 12px;border-radius:999px;background:var(--tile);color:var(--muted);white-space:nowrap}
+.good{background:var(--good-bg);color:var(--good)}.warn{background:var(--warn-bg);color:var(--warn)}.bad{background:var(--bad-bg);color:var(--bad)}
+.t-good{color:var(--good)}.t-warn{color:var(--warn)}.t-bad{color:var(--bad)}
+.banner{display:none;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:14px}
+svg text{font-size:11px;fill:var(--faint)}
+@media (max-width:540px){.lv .w{display:none}.val{font-size:22px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div><h1>PMS power</h1><div class="small" id="host"></div></div>
+  <span class="pill" id="ai">AI: –</span>
+</header>
+
+<div class="banner warn" id="banner"></div>
+
+<div class="grid">
+  <div class="tile"><div class="lab">Battery</div><div class="val" id="soc">–</div><div class="small" id="bat">–</div></div>
+  <div class="tile"><div class="lab">Runtime left</div><div class="val" id="rt">–</div><div class="small">at current draw</div></div>
+  <div class="tile"><div class="lab">ROCK power (12 V)</div><div class="val" id="w12">–</div><div class="small" id="v12">–</div></div>
+  <div class="tile"><div class="lab">Converter efficiency</div><div class="val" id="eff">–</div><div class="small" id="loss">–</div></div>
+</div>
+
+<div class="card">
+  <div class="row"><span class="lab">Power level</span><span class="small" id="bud">–</span></div>
+  <div class="levels" id="levels"></div>
+</div>
+
+<div class="card">
+  <div class="row"><span class="lab">ROCK power, last 60 s</span>
+    <span class="small"><span style="color:var(--line)">━</span> measured &nbsp; ┅ budget</span></div>
+  <svg viewBox="0 0 640 170" width="100%" role="img" aria-label="ROCK power over the last 60 seconds" style="margin-top:6px">
+    <g stroke="var(--border)" stroke-width="1">
+      <line x1="36" y1="150" x2="636" y2="150"/><line x1="36" y1="115" x2="636" y2="115"/>
+      <line x1="36" y1="80" x2="636" y2="80"/><line x1="36" y1="45" x2="636" y2="45"/><line x1="36" y1="10" x2="636" y2="10"/>
+    </g>
+    <text x="30" y="154" text-anchor="end">0</text><text x="30" y="84" text-anchor="end">20</text><text x="30" y="14" text-anchor="end">40 W</text>
+    <text x="36" y="166">60 s ago</text><text x="636" y="166" text-anchor="end">now</text>
+    <polyline id="bl" fill="none" stroke="var(--faint)" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <polyline id="pl" fill="none" stroke="var(--line)" stroke-width="2" stroke-linejoin="round"/>
+  </svg>
+</div>
+
+<div class="grid">
+  <div class="tile"><div class="lab">CPU cap</div><div class="val sm" id="cpu">–</div></div>
+  <div class="tile"><div class="lab">NPU cap</div><div class="val sm" id="npu">–</div></div>
+  <div class="tile"><div class="lab">ROCK temperature</div><div class="val sm" id="temp">–</div></div>
+  <div class="tile"><div class="lab">Alerts</div><div class="val sm" id="alert">–</div></div>
+</div>
+<div class="small" id="foot"></div>
+</main>
+
+<script>
+const LEVELS = [10, 16.5, 23, 29.5, 36];
+const $ = id => document.getElementById(id);
+$('host').textContent = location.host;
+$('levels').innerHTML = LEVELS.map((w, i) =>
+  `<div class="lv" data-l="${i + 1}">${i + 1}<span class="w">&nbsp;· ${w} W</span></div>`).join('');
+
+const num = v => typeof v === 'number' && isFinite(v);
+const fmt = (v, d, u = '') => num(v) ? v.toFixed(d) + u : '–';
+const AI = { idle: ['idle', ''], retrieve: ['searching documents', 'good'],
+             prefill: ['reading prompt', 'good'], generate: ['generating', 'good'] };
+const y = w => 150 - Math.min(Math.max(w || 0, 0), 40) * 3.5;
+
+function banner(text) {
+  const b = $('banner');
+  b.style.display = text ? 'block' : 'none';
+  b.textContent = text || '';
+}
+
+function draw(hist) {
+  const pts = hist.slice(-60), n = 60, dx = 600 / (n - 1), off = n - pts.length;
+  const line = k => pts.map((p, i) => num(p[k]) ? (36 + (off + i) * dx).toFixed(1) + ',' + y(p[k]).toFixed(1) : null)
+                       .filter(Boolean).join(' ');
+  $('pl').setAttribute('points', line('w12'));
+  $('bl').setAttribute('points', line('budget_w'));    // empty in monitor mode (no budget)
+}
+
+function render(d) {
+  const L = d.latest || {};
+  if (L.missing) banner(`No data yet. Is the power manager running? (looking for ${d.log})`);
+  else if (L.stale) banner('Data is more than 5 seconds old. The power manager may have stopped.');
+  else banner('');
+
+  $('soc').textContent = num(L.soc) ? Math.round(L.soc * 100) + '%' : '–';
+  $('bat').textContent = `${fmt(L.bat_v, 1, ' V')} · ${fmt(L.bat_w, 1, ' W')}`;
+  $('rt').textContent = num(L.runtime_h) ? (L.runtime_h > 99 ? '>99 h' : L.runtime_h.toFixed(1) + ' h') : '–';
+  $('w12').textContent = fmt(L.w12, 1, ' W');
+  $('v12').textContent = `${fmt(L.v12, 2, ' V')} · ${fmt(L.a12, 2, ' A')}`;
+  $('eff').textContent = num(L.eff) ? Math.round(L.eff * 100) + '%' : '–';
+  $('loss').textContent = num(L.bat_w) && num(L.w12) ? (L.bat_w - L.w12).toFixed(1) + ' W lost as heat' : '–';
+  $('bud').textContent = L.mode === 'monitor' ? 'Monitor mode: clocks not managed (kept at maximum)'
+                       : num(L.budget_w) ? `Budget ${L.budget_w} W · throttle step ${L.step} / 11` : '–';
+  document.querySelectorAll('.lv').forEach(e => e.classList.toggle('on', +e.dataset.l === L.level));
+
+  const [label, cls] = AI[L.ai] || [L.ai || '–', ''];
+  $('ai').textContent = 'AI: ' + label;
+  $('ai').className = 'pill ' + cls;
+
+  $('cpu').textContent = fmt(L.cpu_ghz, 1, ' GHz');
+  $('npu').textContent = fmt(L.npu_ghz, 2, ' GHz');
+  $('temp').textContent = fmt(L.temp_c, 0, ' °C');
+  $('temp').className = 'val sm ' + (L.temp_c >= 85 ? 't-bad' : L.temp_c >= 75 ? 't-warn' : '');
+
+  const A = { battery_low: ['Battery low', 't-bad'], over_budget: ['Over budget', 't-warn'] }[L.alert] || ['None', 't-good'];
+  $('alert').textContent = L.missing ? '–' : A[0];
+  $('alert').className = 'val sm ' + (L.missing ? '' : A[1]);
+
+  $('foot').textContent = (d.demo ? 'Demo mode: simulated data. ' : '') +
+    (L.mode ? `Power manager mode: ${L.mode}. ` : '') + `Pack size set to ${d.pack_wh} Wh. Updates every second.`;
+  draw(d.history || []);
+}
+
+async function tick() {
+  try {
+    const r = await fetch('/api/latest', { cache: 'no-store' });
+    render(await r.json());
+  } catch (e) {
+    banner('Lost connection to the ROCK. Retrying…');
+  }
+}
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
