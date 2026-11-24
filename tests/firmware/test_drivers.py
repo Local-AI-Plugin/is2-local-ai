@@ -10,6 +10,8 @@ from tests.firmware.fakes import FakeBus, set_reading
 
 
 class LTC2945Test(unittest.TestCase):
+    """One chip at 0x6F on a fake bus; register values are set by hand or by set_reading."""
+
     def setUp(self):
         self.bus = FakeBus()
         self.bus.add_chip(0x6F)
@@ -31,6 +33,7 @@ class LTC2945Test(unittest.TestCase):
         self.assertAlmostEqual(w, 48.10 * 0.210, delta=0.01)
 
     def test_full_scale_does_not_overflow(self):
+        # Largest 12-bit codes (0xFFF) on both inputs: the 24-bit power must still decode.
         set_reading(self.bus, 0x6F, 0xFFF * 0.025, 0xFFF * 2.5e-3)
         v, a, w = self.chip.read()
         self.assertAlmostEqual(v, 102.375)

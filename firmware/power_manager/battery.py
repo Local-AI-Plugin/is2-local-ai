@@ -10,6 +10,14 @@ import os
 
 
 class Battery:
+    """Counts battery energy and turns it into a state of charge.
+
+    pack_wh       usable pack energy in watt-hours
+    v_full        pack voltage (as IC1 reads it) that means fully charged
+    state_file    where the energy count is saved (None = not saved; tests and demos)
+    save_every_s  how often update() saves; saving every 100 ms would wear the eMMC
+    """
+
     def __init__(self, pack_wh, v_full, state_file=None, save_every_s=30.0):
         self.pack_j = pack_wh * 3600.0
         self.v_full = v_full
@@ -21,6 +29,7 @@ class Battery:
         self._load()
 
     def _load(self):
+        """Continue from the saved energy count; a missing or broken file means start full."""
         if not self.state_file:
             return
         try:
@@ -30,6 +39,7 @@ class Battery:
             pass
 
     def save(self):
+        """Write the energy count (temp file + rename, so a power cut can't leave half a file)."""
         if not self.state_file:
             return
         try:
@@ -42,6 +52,11 @@ class Battery:
             pass
 
     def update(self, watts, volts, dt, now):
+        """Add one sample: `watts` drawn from the battery for `dt` seconds at time `now`.
+
+        Energy = watts × seconds (joules). Negative values are ignored so a glitch or a
+        clock jump can't add charge back. Reaching v_full resets the count (charged).
+        """
         energy = max(0.0, watts) * max(0.0, dt)
         self.used_j += energy
         self.total_j += energy
@@ -55,4 +70,5 @@ class Battery:
 
     @property
     def soc(self):
+        """State of charge from 0.0 (empty) to 1.0 (full)."""
         return max(0.0, 1.0 - self.used_j / self.pack_j)

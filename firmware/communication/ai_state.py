@@ -29,12 +29,23 @@ import os
 import time
 
 STATE_DIR = os.environ.get("PMS_STATE_DIR", "/run/pms/ai_state.d")
+# Order matters: position in this tuple is the priority used by current_state().
 STATES = ("idle", "retrieve", "generate", "prefill")      # lowest to highest priority
-MAX_AGE_S = 900.0
+MAX_AGE_S = 900.0     # 15 min: longer than any single LLM answer on this board
 
 
 def set_state(source, state, state_dir=None, now=None):
-    """Record `state` for `source`. Returns True if written, False if the PMS folder is absent."""
+    """Record `state` for `source`. Returns True if written, False if the PMS folder is absent.
+
+    source     the writer's name; becomes the file name (e.g. "rkllm_server")
+    state      one of STATES; anything else raises ValueError (a typo should fail loudly)
+    state_dir  folder to write in (default STATE_DIR; the tests pass a temp folder)
+    now        timestamp to store (default: current time; the tests pass fixed times)
+
+    The file holds "<state> <unix time>". It is written to a temporary name and then
+    renamed over the real one, because a rename is atomic: the power manager reads
+    either the old file or the new one, never a half-written one.
+    """
     if state not in STATES:
         raise ValueError(f"unknown AI state {state!r}; use one of {STATES}")
     d = state_dir or STATE_DIR
@@ -46,6 +57,8 @@ def set_state(source, state, state_dir=None, now=None):
         os.replace(tmp, path)            # atomic: the reader never sees half a file
         return True
     except OSError:
+        # Folder missing or not writable: the PMS is not installed. Clean up and carry on,
+        # because the LLM must keep working without it.
         with contextlib.suppress(OSError):
             os.remove(tmp)
         return False
@@ -62,7 +75,11 @@ def busy(source, state, state_dir=None):
 
 
 def read_states(state_dir=None, now=None, max_age_s=MAX_AGE_S):
-    """{source: state} for every writer, with stale busy states reported as idle."""
+    """{source: state} for every writer, with stale busy states reported as idle.
+
+    Files that cannot be read or parsed are skipped (a writer may be mid-rename, or a
+    stray file may be in the folder). A missing folder gives an empty dict.
+    """
     d = state_dir or STATE_DIR
     now = time.time() if now is None else now
     out = {}
@@ -71,7 +88,7 @@ def read_states(state_dir=None, now=None, max_age_s=MAX_AGE_S):
     except OSError:
         return out
     for name in names:
-        if name.endswith(".tmp"):
+        if name.endswith(".tmp"):          # a writer's file that is not finished yet
             continue
         try:
             with open(os.path.join(d, name)) as f:
@@ -79,6 +96,7 @@ def read_states(state_dir=None, now=None, max_age_s=MAX_AGE_S):
             state, stamp = parts[0], float(parts[1])
         except (OSError, IndexError, ValueError):
             continue
+        # Unknown words and busy states that were never cleared (writer crashed) count as idle.
         if state not in STATES or (state != "idle" and now - stamp > max_age_s):
             state = "idle"
         out[name] = state

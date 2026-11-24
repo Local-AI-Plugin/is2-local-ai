@@ -25,6 +25,7 @@ R_SHUNT_OHM = 0.010
 
 @dataclass(frozen=True)
 class Side:
+    """One side of the board at one moment: volts, amps and watts."""
     volts: float
     amps: float
     watts: float
@@ -32,6 +33,7 @@ class Side:
 
 @dataclass(frozen=True)
 class Reading:
+    """Both sides of the board read together. `t` is Unix time of the reading."""
     t: float
     battery: Side
     output: Side
@@ -43,6 +45,13 @@ class Reading:
 
 
 class PMSBoard:
+    """Opens the I2C bus and gives access to both chips.
+
+    Normally it opens /dev/i2c-<bus_num> itself (call open(), or use it in a with-block).
+    Passing `bus` instead uses an already-open bus or a fake one; the tests do this.
+    After opening, `board.battery` (IC1) and `board.output` (IC2) are LTC2945 objects.
+    """
+
     def __init__(self, bus_num=DEFAULT_BUS, addr_battery=ADDR_BATTERY, addr_output=ADDR_OUTPUT,
                  r_shunt_ohm=R_SHUNT_OHM, bus=None):
         self.bus_num = bus_num
@@ -50,16 +59,22 @@ class PMSBoard:
         self.addr_output = addr_output
         self.r_shunt_ohm = r_shunt_ohm
         self.bus = bus
-        self._owns_bus = False
+        self._owns_bus = False      # True only if we opened the bus, so only then do we close it
         self.battery = self.output = None
         if bus is not None:
             self._make_chips()
 
     def _make_chips(self):
+        """Create the two chip objects on the current bus."""
         self.battery = LTC2945(self.bus, self.addr_battery, self.r_shunt_ohm)
         self.output = LTC2945(self.bus, self.addr_output, self.r_shunt_ohm)
 
     def open(self):
+        """Open /dev/i2c-<bus_num> unless a bus was passed in. Returns self.
+
+        Raises ImportError if smbus2 is not installed and OSError if the bus device
+        does not exist (I2C overlay not enabled).
+        """
         if self.bus is None:
             try:
                 from smbus2 import SMBus     # imported here so tests run without smbus2 installed
@@ -71,6 +86,7 @@ class PMSBoard:
         return self
 
     def close(self):
+        """Close the bus if this object opened it."""
         if self._owns_bus and self.bus is not None:
             self.bus.close()
             self.bus = None

@@ -73,6 +73,9 @@ class ThrottleTest(unittest.TestCase):
         self.backup = os.path.join(self.root, "run", "clock_limits.json")
 
     def make(self):
+        """A Throttle on the fake clock tree. Plain files accept any value, unlike the
+        kernel, so each domain's _write is wrapped to fail the test if min ever ends up
+        above max between two writes (the kernel would reject that write)."""
         doms = T.discover(self.cpu, self.dev)
         for d in doms:                     # fail if min > max at any moment, like the kernel
             orig = d._write
@@ -143,6 +146,7 @@ class LogicTest(unittest.TestCase):
         self.assertEqual(choose_level("idle", 13, 10, 0.9, 2.0), 1)
 
     def test_power_loop_steps_down_over_budget_and_back_up(self):
+        # Rec stands in for a Throttle and just records which steps were applied.
         class Rec:
             n_steps = 12
 
@@ -155,7 +159,7 @@ class LogicTest(unittest.TestCase):
         loop = PowerLoop(th)
         loop.enter_level(1)                                   # start step 1, budget 10 W
         self.assertEqual(loop.update(14.0, 10.0, t=0.0), 0)   # over budget -> down
-        loop.p = None
+        loop.p = None                                         # forget the smoothed 14 W
         self.assertEqual(loop.update(5.0, 10.0, t=20.0), 1)   # lots of room -> up
         self.assertEqual(th.steps, [1, 0, 1])
 
@@ -165,6 +169,10 @@ class LogicTest(unittest.TestCase):
 
 
 class PowerManagerTest(unittest.TestCase):
+    """Whole-program tests: a fake board reading 50 V / 0.20 A (10 W) on the battery side
+    and 12 V / 0.75 A (9 W) on the 12 V side, a temp AI-state folder, and the log written
+    to memory. tick() is called with made-up times, so no test waits in real time."""
+
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
         self.bus = FakeBus()
@@ -178,6 +186,7 @@ class PowerManagerTest(unittest.TestCase):
         self.log = io.StringIO()
 
     def cfg(self, **kw):
+        """Config with every file path inside the temp folder, plus any overrides."""
         base = dict(battery_file=os.path.join(self.tmp, "battery.json"), state_dir=self.state_dir,
                     clock_backup=os.path.join(self.tmp, "clocks.json"))
         base.update(kw)

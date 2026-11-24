@@ -29,6 +29,11 @@ DEMAND_LEVEL = {"idle": 1, "retrieve": 4, "generate": 4, "prefill": 5}
 
 @dataclass
 class Config:
+    """Every setting the power manager uses, with its default.
+
+    Build it with Config.from_env() on the board (reads PMS_* variables), or
+    Config(field=value, ...) in tests. An unknown mode raises ValueError.
+    """
     # I2C (ROCK 5T pins 13/15, I2C3-M1 overlay)
     i2c_bus: int = 3
     addr_battery: int = 0x6F
@@ -61,13 +66,23 @@ class Config:
     state_dir: str = "/run/pms/ai_state.d"
 
     def __post_init__(self):
+        """Runs after the fields are set: reject a mistyped mode instead of guessing."""
         if self.mode not in MODES:
             raise ValueError(f"PMS_MODE must be one of {MODES}, got {self.mode!r}")
 
     @classmethod
     def from_env(cls, env=None):
+        """Defaults, overridden by any PMS_<FIELD> variable that is set and not empty.
+
+        env  a dict to read instead of os.environ (the tests use this)
+
+        Each value is converted to the field's type: bools accept 1/true/yes/on,
+        ints accept decimal or hex ("3", "0x6F").
+        """
         env = os.environ if env is None else env
         kwargs = {}
+        # Walk the dataclass fields so a new setting is picked up from the environment
+        # automatically, without editing this function.
         for f in fields(cls):
             raw = env.get("PMS_" + f.name.upper())
             if raw in (None, ""):
@@ -84,4 +99,5 @@ class Config:
 
 
 def budget_w(level):
+    """12 V watt budget for a power level (1..5)."""
     return LEVEL_BUDGET_W[level]

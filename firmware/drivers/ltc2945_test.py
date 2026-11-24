@@ -11,6 +11,8 @@ import sys
 import time
 from pathlib import Path
 
+# When run as a plain script (python3 firmware/drivers/ltc2945_test.py), Python only
+# searches this file's folder. Add the repo root so `firmware.…` imports work too.
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
@@ -18,10 +20,12 @@ from firmware.drivers.pms_board import DEFAULT_BUS, PMSBoard
 
 
 def fmt(name, side):
+    """One side of a reading as a fixed-width text column."""
     return f"{name}: {side.volts:6.2f} V {side.amps:6.3f} A {side.watts:6.2f} W"
 
 
 def main(argv):
+    """Check both chips, then print readings until Ctrl+C. Returns the exit code."""
     bus = int(argv[1]) if len(argv) > 1 else DEFAULT_BUS
     print(f"Using I2C bus {bus}")
     try:
@@ -33,6 +37,7 @@ def main(argv):
         print(f"Cannot open /dev/i2c-{bus}: {e}\nIs the I2C3-M1 overlay enabled? (see firmware/docs/PMS_BRINGUP.md)")
         return 1
     try:
+        # Report each chip separately so a bad solder joint points at one part.
         missing = board.missing()
         for name, addr in (("IC1 battery (48 V)", board.addr_battery), ("IC2 12 V output", board.addr_output)):
             ok = not any(f"0x{addr:02X}" in m for m in missing)

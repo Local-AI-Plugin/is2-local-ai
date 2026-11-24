@@ -32,13 +32,19 @@ DEMO = "--demo" in sys.argv
 STALE_S = 5.0          # log older than this = power_manager.py is not running
 HISTORY_S = 120        # seconds of chart history kept in memory
 
+# Shared between the sampler thread (writes once per second) and the web server threads
+# (read on every page request); `lock` stops a request seeing a half-updated record.
 history = deque(maxlen=HISTORY_S)
 latest = {}
 lock = threading.Lock()
 
 
 def read_last_record(path):
-    """Newest complete measurement line of the log, or None."""
+    """Newest complete measurement line of the log, or None.
+
+    Reads only the last 8 KB instead of the whole file, which can be tens of MB.
+    The first line in that chunk may be cut in half; it fails to parse and is skipped.
+    """
     try:
         with open(path, "rb") as f:
             f.seek(0, os.SEEK_END)
@@ -57,6 +63,7 @@ def read_last_record(path):
 
 
 def _num(path):
+    """First number in a sysfs file, or None if it can't be read."""
     try:
         with open(path) as f:
             return float(f.read().split()[0])
@@ -65,7 +72,9 @@ def _num(path):
 
 
 def rock_stats():
-    cpu = [v for v in (_num(p) for p in glob.glob("/sys/devices/system/cpu/cpufreq/policy*/scaling_max_freq")) if v]
+    """Highest CPU cap, NPU cap and hottest temperature on the ROCK right now.
+    Each kernel interface uses different units, converted to GHz and °C here."""
+    cpu =[v for v in (_num(p) for p in glob.glob("/sys/devices/system/cpu/cpufreq/policy*/scaling_max_freq")) if v]
     npu = [v for v in (_num(os.path.join(p, "max_freq")) for p in glob.glob("/sys/class/devfreq/*")
                        if "npu" in p.lower()) if v]
     temps = [v for v in (_num(p) for p in glob.glob("/sys/class/thermal/thermal_zone*/temp")) if v is not None]
@@ -84,6 +93,9 @@ class Demo:
         self.soc = 0.82
 
     def record(self):
+        """One fake log record. The AI phase changes every 10 s, watts sit near the
+        level's budget with an occasional overshoot, and the battery drains 20× fast
+        so the charge visibly moves."""
         t = time.time()
         ai = self.PHASES[int((t - self.t0) // 10) % len(self.PHASES)]
         level = {"prefill": 5, "generate": 4, "retrieve": 4}.get(ai, 1)
@@ -108,6 +120,9 @@ class Demo:
 
 
 def sampler():
+    """Background thread: once per second, fetch the newest record, add the ROCK's clocks
+    and temperature, work out the extra fields the page shows (stale, runtime left,
+    alert) and store it in `latest` / `history` for the web handler."""
     demo = Demo() if DEMO else None
     while True:
         rec = demo.record() if demo else read_last_record(LOG)
@@ -115,6 +130,8 @@ def sampler():
             if not demo:
                 rec.update(rock_stats())
             rec["stale"] = time.time() - rec.get("t", 0) > STALE_S
+            # Runtime left = remaining energy / current draw; skipped when nearly idle,
+            # where it would show a meaningless huge number.
             bw = rec.get("bat_w") or 0
             rec["runtime_h"] = round(rec.get("soc", 0) * PACK_WH / bw, 1) if bw > 0.5 else None
             budget = rec.get("budget_w")
@@ -133,7 +150,11 @@ def sampler():
 
 
 class Handler(BaseHTTPRequestHandler):
+    """Web server with two addresses: "/" serves dashboard.html, and "/api/latest" gives
+    the newest data as JSON, which the page fetches once per second."""
+
     def _send(self, code, body, ctype):
+        """Send a complete response; no-store so the browser never shows old data."""
         self.send_response(code)
         self.send_header("Content-Type", ctype)
         self.send_header("Cache-Control", "no-store")
@@ -159,6 +180,8 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main():
+    """Start the sampler thread and serve the page on all network interfaces until Ctrl+C."""
+    # daemon=True: the thread stops by itself when the server exits.
     threading.Thread(target=sampler, daemon=True).start()
     server = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
     print(f"PMS dashboard {'(DEMO DATA) ' if DEMO else ''}on http://localhost:{PORT}")

@@ -20,6 +20,7 @@ import sys
 import time
 from pathlib import Path
 
+# Lets it also run as a plain script (see the same lines in power_manager.py).
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
@@ -29,7 +30,14 @@ from firmware.power_manager.throttle import Throttle
 
 
 def suggest(rows, budgets=LEVEL_BUDGET_W):
-    """Level -> fastest step whose peak watts stay under that level's budget (step 0 if none)."""
+    """Level -> fastest step whose peak watts stay under that level's budget (step 0 if none).
+
+    rows     one dict per step with at least "step" and "w12_peak"
+    budgets  {level: watts}
+
+    Peak (not mean) is used so a level's start step doesn't immediately trip the
+    closed loop on the first spike.
+    """
     out = {}
     for level, budget in budgets.items():
         ok = [r["step"] for r in rows if r["w12_peak"] <= budget]
@@ -38,6 +46,7 @@ def suggest(rows, budgets=LEVEL_BUDGET_W):
 
 
 def main():
+    """Step through every throttle step under load, print and save the watts, suggest the table."""
     cfg = Config.from_env()
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--bus", type=int, default=cfg.i2c_bus)
@@ -54,9 +63,13 @@ def main():
         with PMSBoard(args.bus, cfg.addr_battery, cfg.addr_output, cfg.r_shunt_ohm) as board:
             if board.missing():
                 sys.exit(f"PMS chips not answering: {board.missing()}")
+            # Slowest to fastest. After each clock change, wait for the load to settle,
+            # then sample 12 V watts at the power manager's rate.
             for k in range(cfg.n_steps):
                 throttle.apply_step(k)
                 time.sleep(args.settle)
+                # (Re)start the load command if it isn't running, so every step is
+                # measured under load. poll() is None while the command still runs.
                 if args.load_cmd and (load is None or load.poll() is not None):
                     load = subprocess.Popen(args.load_cmd, shell=True)
                 watts = []
@@ -75,6 +88,7 @@ def main():
     except KeyboardInterrupt:
         print("\ninterrupted")
     finally:
+        # Always stop the load and give the clocks back, even after Ctrl+C or an error.
         if load and load.poll() is None:
             load.terminate()
         throttle.restore()
