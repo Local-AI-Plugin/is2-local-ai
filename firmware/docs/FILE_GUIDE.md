@@ -62,6 +62,7 @@ There are two links:
 |---|---|
 | `FILE_GUIDE.md` | This file. |
 | `PMS_BRINGUP.md` | Step-by-step hardware bring-up for the ROCK 5T: wiring, enabling I2C, the first readings, and installing the services. |
+| `POSSIBLE_SHORTCOMINGS.md` | 28 numbered risks and limits of the ROCK ↔ PMS integration, each with its status (handled, check on hardware, or open) and what to do about it. |
 
 ### Tests: `tests/firmware/` (repo root)
 

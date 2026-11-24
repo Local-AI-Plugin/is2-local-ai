@@ -208,6 +208,16 @@ class PowerManagerTest(unittest.TestCase):
         self.assertAlmostEqual(r["eff"], 0.9, places=2)
         self.assertGreater(r["energy_j"], 0)
 
+    def test_clock_jump_does_not_add_energy(self):
+        pm = PowerManager(self.cfg(), self.board, None, self.log, shutdown_cmd=None)
+        pm.tick(1000.0)
+        pm.tick(1000.1)
+        before = pm.battery.total_j
+        pm.tick(1000.1 + 3600.0)            # wall clock jumps forward one hour
+        self.assertLessEqual(pm.battery.total_j - before, 10.0 * 1.0 + 1e-6)   # ≤ 10 W × 1 s
+        pm.tick(500.0)                      # and backwards
+        self.assertGreaterEqual(pm.battery.total_j, before)
+
     def test_manage_mode_follows_ai_state(self):
         cpu, dev = make_sysfs(os.path.join(self.tmp, "sys"))
         th = T.Throttle(12, 0.30, os.path.join(self.tmp, "clocks.json"), T.discover(cpu, dev))

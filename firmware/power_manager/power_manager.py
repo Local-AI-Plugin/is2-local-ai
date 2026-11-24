@@ -41,6 +41,7 @@ STEP_UP_S = 1.0      # minimum time between up steps (slower up than down: no os
 HEADROOM = 0.85      # step up only if smoothed watts < 85 % of budget
 RETRY_S = 10.0       # after a step was over budget, do not climb back to it for this long
 I2C_FAIL_LIMIT = 20  # consecutive failed reads (2 s) before releasing the clock caps
+MAX_DT_S = 1.0       # longest gap counted as energy between two readings (see tick())
 
 
 def battery_ceiling(soc):
@@ -230,7 +231,10 @@ class PowerManager:
         self.last = r
 
         # Energy: watts × time since the previous good reading (0 on the first one).
-        dt = 0.0 if self.t_prev is None else now - self.t_prev
+        # `now` is wall-clock time, which can jump (NTP correcting the time after boot,
+        # someone setting the date). Clamp the gap to 0..MAX_DT_S so a jump can't add
+        # hours of fake energy, or remove energy, in one step.
+        dt = 0.0 if self.t_prev is None else min(max(now - self.t_prev, 0.0), MAX_DT_S)
         self.t_prev = now
         self.battery.update(r.battery.watts, r.battery.volts, dt, now)
         self.window.add(r)
