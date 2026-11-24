@@ -33,6 +33,7 @@ There are two links:
 | `ltc2945.py` | Driver for one LTC2945 chip. It holds the register addresses and converts raw readings into volts (25 mV per count), amps (25 µV per count ÷ 10 mΩ shunt = 2.5 mA) and watts (62.5 µW per count). It can also set the max-power alert limit and clear faults. It is the same job as a sensor driver written on top of STM32 HAL; here Linux and `smbus2` take the place of HAL. |
 | `pms_board.py` | The whole PMS board as the ROCK sees it: opens I2C bus 3 and creates both chips (0x6F battery side, 0x6C 12 V side). `read()` returns one reading of both sides plus the converter efficiency. `missing()` names any chip that doesn't answer. |
 | `ltc2945_test.py` | Bring-up test. It checks both chips answer, then prints V / A / W for both sides once per second. Run it first when the board is wired: `python3 firmware/drivers/ltc2945_test.py` |
+| `pms_stub.py` | A pretend PMS board for testing without hardware. After `sudo modprobe i2c-stub chip_addr=0x6c,0x6f`, it fills the kernel's fake I2C bus with realistic LTC2945 register values: a fixed reading, a low battery, or `--profile llm` (a repeating idle/prompt/answer load). The real tools (`i2cdetect`, `ltc2945_test.py`, the power manager, the dashboard) then run unchanged against the fake bus number. It can't test wiring, pull-ups, noise or chip accuracy. |
 
 ### `communication/` (talking to the LLM software)
 
