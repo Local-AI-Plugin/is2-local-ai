@@ -1,0 +1,18 @@
+@prefix ex: <https://example.org/local-ai/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+# Synthetic demonstration data; these are not measured project results.
+ex:LocalInference a ex:Capability ; rdfs:label "Local inference" .
+ex:task1 a ex:OfflineTask ;
+    rdfs:label "Summarize an offline document" ;
+    ex:requiresCapability ex:LocalInference ;
+    ex:status "open" ; ex:supportedBy ex:chunk1 .
+ex:task2 a ex:Task ;
+    rdfs:label "Review the summary" ;
+    ex:dependsOn ex:task1 ;
+    ex:status "open" ; ex:supportedBy ex:chunk1 .
+ex:chunk1 a ex:Evidence ;
+    rdfs:label "Synthetic requirements paragraph" ;
+    prov:wasDerivedFrom ex:demoDocument ;
+    ex:chunkId "demo-document:chunk-001" .

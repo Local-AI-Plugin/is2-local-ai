@@ -1,0 +1,8 @@
+[
+  {
+    "task": "s1:ObserveAreaTask",
+    "capability": "s1:CameraObservation",
+    "capabilityName": "Camera observation",
+    "requirement": "s1:ReqCameraObservation"
+  }
+]

@@ -1,0 +1,16 @@
+@prefix ex: <https://example.org/local-ai/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:ontology a owl:Ontology .
+ex:Task a owl:Class .
+ex:OfflineTask a owl:Class ; rdfs:subClassOf ex:Task .
+ex:Capability a owl:Class .
+ex:Evidence a owl:Class .
+ex:Hypothesis a owl:Class .
+ex:UnresolvedQuestion a owl:Class .
+ex:requiresCapability a owl:ObjectProperty .
+ex:dependsOn a owl:ObjectProperty .
+ex:status a owl:DatatypeProperty ; rdfs:range xsd:string .
+ex:supportedBy a owl:ObjectProperty .

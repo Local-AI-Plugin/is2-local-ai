@@ -1,0 +1,672 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xml:base="https://example.org/is2/ugv-mission-planning" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+  <owl:Ontology rdf:about=""><rdfs:label>UGV Mission Planning Ontology</rdfs:label><owl:versionInfo>0.1.0</owl:versionInfo><rdfs:comment>Scenario 1: controlled environmental assessment, from brief intake through human review. Completeness, freshness, cumulative estimates, cycles and agreement between a reviewed version and its report are external checks. expectedAssertionClass stores an ontology class IRI as an anyURI literal. Conditions and readings identify their subjects and measured properties using anyURI literals.</rdfs:comment></owl:Ontology>
+
+  <owl:Class rdf:about="#Mission">
+    <rdfs:label>Mission</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#assignsVehicle"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#UGV"/></owl:Restriction></rdfs:subClassOf>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#documentedBy"/><owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality><owl:onClass rdf:resource="#MissionBrief"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#AssessmentObjective">
+    <rdfs:label>Assessment Objective</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="#Task">
+    <rdfs:label>Task</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="#UGV">
+    <rdfs:label>UGV</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="#CourseOfAction">
+    <rdfs:label>Course Of Action</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#hasVersion"/><owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality><owl:onClass rdf:resource="#COAVersion"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#PlanningConstraint">
+    <rdfs:label>Planning Constraint</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="#MissionBrief">
+    <rdfs:label>Mission Brief</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#missionStatement"/><owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality><owl:onClass rdf:resource="#MissionStatement"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#MissionStatement">
+    <rdfs:label>Mission Statement</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="#MissionAssertion">
+    <rdfs:label>Mission Assertion</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#isAbout"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass><owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Class rdf:about="#Mission"/><owl:Class rdf:about="#Task"/></owl:unionOf></owl:Class></owl:onClass></owl:Restriction></rdfs:subClassOf>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#concernsFactor"/><owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality><owl:onClass rdf:resource="#METTCFactor"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#IntakeValidationReport">
+    <rdfs:label>Intake Validation Report</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#ValidationReport"/>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#checkedBriefRevision"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#MissionBrief"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#Prerequisite">
+    <rdfs:label>Prerequisite</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#requiresState"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#StateCondition"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#CapabilityRequirement">
+    <rdfs:label>Capability Requirement</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#requiresCapability"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#Capability"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#StateCondition">
+    <rdfs:label>State Condition</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="#Capability">
+    <rdfs:label>Capability</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="#Platform">
+    <rdfs:label>Platform</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="#VehicleStateSnapshot">
+    <rdfs:label>Vehicle State Snapshot</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#snapshotOf"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#UGV"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#ObservedStateValue">
+    <rdfs:label>Observed State Value</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#readingOf"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#VehicleStateSnapshot"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#COAVersion">
+    <rdfs:label>COAVersion</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#planningBaseline"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#VehicleStateSnapshot"/></owl:Restriction></rdfs:subClassOf>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#specifiesPlan"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#Plan"/></owl:Restriction></rdfs:subClassOf>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#versionOf"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#CourseOfAction"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#Plan">
+    <rdfs:label>Plan</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#containsStep"/><owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality><owl:onClass rdf:resource="#PlannedTask"/></owl:Restriction></rdfs:subClassOf>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#planOfVersion"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#COAVersion"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#PlannedTask">
+    <rdfs:label>Planned Task</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#usesSpecification"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#Task"/></owl:Restriction></rdfs:subClassOf>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#stepOfPlan"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#Plan"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#PlannedObservation">
+    <rdfs:label>Planned Observation</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#PlannedTask"/>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#observationSite"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#InspectionArea"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#InspectionArea">
+    <rdfs:label>Inspection Area</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#Location"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#PlannedMovement">
+    <rdfs:label>Planned Movement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#PlannedTask"/>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#movementOrigin"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#Location"/></owl:Restriction></rdfs:subClassOf>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#movementDestination"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#Location"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#Location">
+    <rdfs:label>Location</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="#METTCFactor">
+    <rdfs:label>METTCFactor</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="#ApprovalDecision">
+    <rdfs:label>Approval Decision</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#consideredReport"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#CandidateValidationReport"/></owl:Restriction></rdfs:subClassOf>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#reviewedVersion"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#COAVersion"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#CandidateValidationReport">
+    <rdfs:label>Candidate Validation Report</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#ValidationReport"/>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#checkedVersion"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#COAVersion"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#ValidationReport">
+    <rdfs:label>Validation Report</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#containsResult"/><owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality><owl:onClass rdf:resource="#ValidationResult"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#ValidationResult">
+    <rdfs:label>Validation Result</rdfs:label>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#resultOf"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#ValidationReport"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#MissingFieldResult">
+    <rdfs:label>Missing Field Result</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#ValidationResult"/>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#unmetRequirement"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#CompletenessRequirement"/></owl:Restriction></rdfs:subClassOf>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#affectedSubject"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass><owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Class rdf:about="#Mission"/><owl:Class rdf:about="#Task"/></owl:unionOf></owl:Class></owl:onClass></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#CompletenessRequirement">
+    <rdfs:label>Completeness Requirement</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="#AssertionConflictResult">
+    <rdfs:label>Assertion Conflict Result</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#ValidationResult"/>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#conflictingAssertions"/><owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality><owl:onClass rdf:resource="#MissionAssertion"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#ConstraintCheckResult">
+    <rdfs:label>Constraint Check Result</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#ValidationResult"/>
+    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#evaluatedConstraint"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#PlanningConstraint"/></owl:Restriction></rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:Class rdf:about="#MissionObjectivesAssertion">
+    <rdfs:label>Mission Objectives Assertion</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#MissionAssertion"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#EnemiesAssertion">
+    <rdfs:label>Enemies Assertion</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#MissionAssertion"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#TerrainAssertion">
+    <rdfs:label>Terrain Assertion</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#MissionAssertion"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#TroopsAndSupportAssertion">
+    <rdfs:label>Troops And Support Assertion</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#MissionAssertion"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#TimeAndDeadlinesAssertion">
+    <rdfs:label>Time And Deadlines Assertion</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#MissionAssertion"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#CiviliansAndInfrastructureAssertion">
+    <rdfs:label>Civilians And Infrastructure Assertion</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#MissionAssertion"/>
+  </owl:Class>
+
+  <owl:ObjectProperty rdf:about="#hasObjective">
+    <rdfs:domain rdf:resource="#Mission"/>
+    <rdfs:range rdf:resource="#AssessmentObjective"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#assignsTask">
+    <rdfs:domain rdf:resource="#Mission"/>
+    <rdfs:range rdf:resource="#Task"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#assignsVehicle">
+    <rdfs:domain rdf:resource="#Mission"/>
+    <rdfs:range rdf:resource="#UGV"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#hasCandidate">
+    <rdfs:domain rdf:resource="#Mission"/>
+    <rdfs:range rdf:resource="#CourseOfAction"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#setsLimit">
+    <rdfs:domain rdf:resource="#Mission"/>
+    <rdfs:range rdf:resource="#PlanningConstraint"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#documentedBy">
+    <rdfs:domain rdf:resource="#Mission"/>
+    <rdfs:range rdf:resource="#MissionBrief"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#missionStatement">
+    <rdfs:domain rdf:resource="#MissionBrief"/>
+    <rdfs:range rdf:resource="#MissionStatement"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#supplies">
+    <rdfs:domain rdf:resource="#MissionBrief"/>
+    <rdfs:range rdf:resource="#MissionAssertion"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#hasIntakeReport">
+    <rdfs:domain rdf:resource="#MissionBrief"/>
+    <rdfs:range rdf:resource="#IntakeValidationReport"/>
+    <owl:inverseOf rdf:resource="#checkedBriefRevision"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#supportsObjective">
+    <rdfs:domain rdf:resource="#Task"/>
+    <rdfs:range rdf:resource="#AssessmentObjective"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#hasSubTask">
+    <rdfs:domain rdf:resource="#Task"/>
+    <rdfs:range rdf:resource="#Task"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#hasPrerequisite">
+    <rdfs:domain rdf:resource="#Task"/>
+    <rdfs:range rdf:resource="#Prerequisite"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#hasRequirement">
+    <rdfs:domain rdf:resource="#Task"/>
+    <rdfs:range rdf:resource="#CapabilityRequirement"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#requiresState">
+    <rdfs:domain rdf:resource="#Prerequisite"/>
+    <rdfs:range rdf:resource="#StateCondition"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#requiresCapability">
+    <rdfs:domain rdf:resource="#CapabilityRequirement"/>
+    <rdfs:range rdf:resource="#Capability"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#hasConfiguration">
+    <rdfs:domain rdf:resource="#UGV"/>
+    <rdfs:range rdf:resource="#Platform"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#supportsCapability">
+    <rdfs:domain rdf:resource="#Platform"/>
+    <rdfs:range rdf:resource="#Capability"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#hasSnapshot">
+    <rdfs:domain rdf:resource="#UGV"/>
+    <rdfs:range rdf:resource="#VehicleStateSnapshot"/>
+    <owl:inverseOf rdf:resource="#snapshotOf"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#containsReading">
+    <rdfs:domain rdf:resource="#VehicleStateSnapshot"/>
+    <rdfs:range rdf:resource="#ObservedStateValue"/>
+    <owl:inverseOf rdf:resource="#readingOf"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#hasVersion">
+    <rdfs:domain rdf:resource="#CourseOfAction"/>
+    <rdfs:range rdf:resource="#COAVersion"/>
+    <owl:inverseOf rdf:resource="#versionOf"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#planningBaseline">
+    <rdfs:domain rdf:resource="#COAVersion"/>
+    <rdfs:range rdf:resource="#VehicleStateSnapshot"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#specifiesPlan">
+    <rdfs:domain rdf:resource="#COAVersion"/>
+    <rdfs:range rdf:resource="#Plan"/>
+    <owl:inverseOf rdf:resource="#planOfVersion"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#containsStep">
+    <rdfs:domain rdf:resource="#Plan"/>
+    <rdfs:range rdf:resource="#PlannedTask"/>
+    <owl:inverseOf rdf:resource="#stepOfPlan"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#usesSpecification">
+    <rdfs:domain rdf:resource="#PlannedTask"/>
+    <rdfs:range rdf:resource="#Task"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#dependsOn">
+    <rdfs:domain rdf:resource="#PlannedTask"/>
+    <rdfs:range rdf:resource="#PlannedTask"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#observationSite">
+    <rdfs:range rdf:resource="#InspectionArea"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#movementOrigin">
+    <rdfs:domain rdf:resource="#PlannedMovement"/>
+    <rdfs:range rdf:resource="#Location"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#movementDestination">
+    <rdfs:domain rdf:resource="#PlannedMovement"/>
+    <rdfs:range rdf:resource="#Location"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#isAbout">
+    <rdfs:domain rdf:resource="#MissionAssertion"/>
+    <rdfs:range><owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Class rdf:about="#Mission"/><owl:Class rdf:about="#Task"/></owl:unionOf></owl:Class></rdfs:range>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#concernsFactor">
+    <rdfs:domain rdf:resource="#MissionAssertion"/>
+    <rdfs:range rdf:resource="#METTCFactor"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#reviewedIn">
+    <rdfs:domain rdf:resource="#COAVersion"/>
+    <rdfs:range rdf:resource="#ApprovalDecision"/>
+    <owl:inverseOf rdf:resource="#reviewedVersion"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#consideredReport">
+    <rdfs:domain rdf:resource="#ApprovalDecision"/>
+    <rdfs:range rdf:resource="#CandidateValidationReport"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#hasCandidateReport">
+    <rdfs:domain rdf:resource="#COAVersion"/>
+    <rdfs:range rdf:resource="#CandidateValidationReport"/>
+    <owl:inverseOf rdf:resource="#checkedVersion"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#containsResult">
+    <rdfs:domain rdf:resource="#ValidationReport"/>
+    <rdfs:range rdf:resource="#ValidationResult"/>
+    <owl:inverseOf rdf:resource="#resultOf"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#affectedFactor">
+    <rdfs:domain rdf:resource="#MissingFieldResult"/>
+    <rdfs:range rdf:resource="#METTCFactor"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#unmetRequirement">
+    <rdfs:domain rdf:resource="#MissingFieldResult"/>
+    <rdfs:range rdf:resource="#CompletenessRequirement"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#affectedSubject">
+    <rdfs:domain rdf:resource="#MissingFieldResult"/>
+    <rdfs:range><owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Class rdf:about="#Mission"/><owl:Class rdf:about="#Task"/></owl:unionOf></owl:Class></rdfs:range>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#conflictingAssertions">
+    <rdfs:domain rdf:resource="#AssertionConflictResult"/>
+    <rdfs:range rdf:resource="#MissionAssertion"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#evaluatedConstraint">
+    <rdfs:domain rdf:resource="#ConstraintCheckResult"/>
+    <rdfs:range rdf:resource="#PlanningConstraint"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#affectedSteps">
+    <rdfs:domain rdf:resource="#ConstraintCheckResult"/>
+    <rdfs:range rdf:resource="#PlannedTask"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#checkedBriefRevision">
+    <rdfs:domain rdf:resource="#IntakeValidationReport"/>
+    <rdfs:range rdf:resource="#MissionBrief"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#snapshotOf">
+    <rdfs:domain rdf:resource="#VehicleStateSnapshot"/>
+    <rdfs:range rdf:resource="#UGV"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#readingOf">
+    <rdfs:domain rdf:resource="#ObservedStateValue"/>
+    <rdfs:range rdf:resource="#VehicleStateSnapshot"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#versionOf">
+    <rdfs:domain rdf:resource="#COAVersion"/>
+    <rdfs:range rdf:resource="#CourseOfAction"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#planOfVersion">
+    <rdfs:domain rdf:resource="#Plan"/>
+    <rdfs:range rdf:resource="#COAVersion"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#stepOfPlan">
+    <rdfs:domain rdf:resource="#PlannedTask"/>
+    <rdfs:range rdf:resource="#Plan"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#reviewedVersion">
+    <rdfs:domain rdf:resource="#ApprovalDecision"/>
+    <rdfs:range rdf:resource="#COAVersion"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#checkedVersion">
+    <rdfs:domain rdf:resource="#CandidateValidationReport"/>
+    <rdfs:range rdf:resource="#COAVersion"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#resultOf">
+    <rdfs:domain rdf:resource="#ValidationResult"/>
+    <rdfs:range rdf:resource="#ValidationReport"/>
+  </owl:ObjectProperty>
+
+  <owl:DatatypeProperty rdf:about="#missionId">
+    <rdfs:domain rdf:resource="#Mission"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#taskName">
+    <rdfs:domain rdf:resource="#Task"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#desiredCondition">
+    <rdfs:domain rdf:resource="#AssessmentObjective"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#vehicleId">
+    <rdfs:domain rdf:resource="#UGV"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#capabilityName">
+    <rdfs:domain rdf:resource="#Capability"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#recordedAt">
+    <rdfs:domain rdf:resource="#VehicleStateSnapshot"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#subject">
+    <rdfs:domain><owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Class rdf:about="#StateCondition"/><owl:Class rdf:about="#ObservedStateValue"/></owl:unionOf></owl:Class></rdfs:domain>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#property">
+    <rdfs:domain><owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Class rdf:about="#StateCondition"/><owl:Class rdf:about="#ObservedStateValue"/></owl:unionOf></owl:Class></rdfs:domain>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#requiredValue">
+    <rdfs:domain rdf:resource="#StateCondition"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#applicableTime">
+    <rdfs:domain rdf:resource="#StateCondition"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#observedValue">
+    <rdfs:domain rdf:resource="#ObservedStateValue"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#versionId">
+    <rdfs:domain rdf:resource="#COAVersion"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#stepId">
+    <rdfs:domain rdf:resource="#PlannedTask"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#estimatedDurationMinutes">
+    <rdfs:domain rdf:resource="#PlannedTask"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#estimatedEnergyWh">
+    <rdfs:domain rdf:resource="#PlannedTask"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#areaId">
+    <rdfs:domain rdf:resource="#InspectionArea"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#briefId">
+    <rdfs:domain rdf:resource="#MissionBrief"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#revision">
+    <rdfs:domain rdf:resource="#MissionBrief"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#field">
+    <rdfs:domain rdf:resource="#MissionAssertion"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#typedValue">
+    <rdfs:domain rdf:resource="#MissionAssertion"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#sourceLocation">
+    <rdfs:domain rdf:resource="#MissionAssertion"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#assertionStatus">
+    <rdfs:domain rdf:resource="#MissionAssertion"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#factorName">
+    <rdfs:domain rdf:resource="#METTCFactor"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#requirementId">
+    <rdfs:domain rdf:resource="#CompletenessRequirement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#expectedAssertionClass">
+    <rdfs:domain rdf:resource="#CompletenessRequirement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#scope">
+    <rdfs:domain><owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Class rdf:about="#CompletenessRequirement"/><owl:Class rdf:about="#PlanningConstraint"/></owl:unionOf></owl:Class></rdfs:domain>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#requiredField">
+    <rdfs:domain rdf:resource="#CompletenessRequirement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#applicabilityCondition">
+    <rdfs:domain rdf:resource="#CompletenessRequirement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#description">
+    <rdfs:domain rdf:resource="#PlanningConstraint"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#comparison">
+    <rdfs:domain rdf:resource="#PlanningConstraint"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#limitValue">
+    <rdfs:domain rdf:resource="#PlanningConstraint"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#unitOrTimeBasis">
+    <rdfs:domain><owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Class rdf:about="#PlanningConstraint"/><owl:Class rdf:about="#ConstraintCheckResult"/></owl:unionOf></owl:Class></rdfs:domain>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#checkedAt">
+    <rdfs:domain rdf:resource="#ValidationReport"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#checkCoverage">
+    <rdfs:domain rdf:resource="#ValidationReport"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#checkName">
+    <rdfs:domain rdf:resource="#ValidationResult"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#outcome">
+    <rdfs:domain rdf:resource="#ValidationResult"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#explanation">
+    <rdfs:domain rdf:resource="#ValidationResult"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#missingField">
+    <rdfs:domain rdf:resource="#MissingFieldResult"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#evaluatedValue">
+    <rdfs:domain rdf:resource="#ConstraintCheckResult"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#applicableLimit">
+    <rdfs:domain rdf:resource="#ConstraintCheckResult"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#decision">
+    <rdfs:domain rdf:resource="#ApprovalDecision"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#decidedBy">
+    <rdfs:domain rdf:resource="#ApprovalDecision"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#decidedAt">
+    <rdfs:domain rdf:resource="#ApprovalDecision"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+  </owl:DatatypeProperty>
+</rdf:RDF>

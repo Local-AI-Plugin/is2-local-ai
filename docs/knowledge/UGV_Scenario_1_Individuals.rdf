@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xml:base="https://example.org/is2/ugv-mission-planning/scenario-1" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:ugv="https://example.org/is2/ugv-mission-planning#">
+  <owl:Ontology rdf:about=""><owl:imports rdf:resource="https://example.org/is2/ugv-mission-planning"/><rdfs:label>Scenario 1 controlled environmental inspection individuals</rdfs:label><rdfs:comment>Synthetic competency-question test data. Reports contain expected findings. Candidate plans assume a 10:30 UTC start, no waiting, continued site access and camera availability. Alpha uses brief A revision 1; Alpha-Bravo uses brief AB revision 3.</rdfs:comment></owl:Ontology>
+  <owl:NamedIndividual rdf:about="#Staging">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#Location"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Alpha">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#InspectionArea"/>
+    <ugv:areaId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alpha</ugv:areaId>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#AssessAlpha">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#AssessmentObjective"/>
+    <ugv:desiredCondition rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Environmental observation recorded for Alpha.</ugv:desiredCondition>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Bravo">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#InspectionArea"/>
+    <ugv:areaId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bravo</ugv:areaId>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#AssessBravo">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#AssessmentObjective"/>
+    <ugv:desiredCondition rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Environmental observation recorded for Bravo.</ugv:desiredCondition>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#ObserveAreaTask">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#Task"/>
+    <ugv:taskName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observe an inspection area</ugv:taskName>
+    <ugv:supportsObjective rdf:resource="#AssessAlpha"/>
+    <ugv:supportsObjective rdf:resource="#AssessBravo"/>
+    <ugv:hasRequirement rdf:resource="#ReqCameraObservation"/>
+    <ugv:hasPrerequisite rdf:resource="#PreCameraAvailable"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MoveTask">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#Task"/>
+    <ugv:taskName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Move between inspection locations</ugv:taskName>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#CameraObservation">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#Capability"/>
+    <ugv:capabilityName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Camera observation</ugv:capabilityName>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#ReqCameraObservation">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#CapabilityRequirement"/>
+    <ugv:requiresCapability rdf:resource="#CameraObservation"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#InspectionPlatform">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#Platform"/>
+    <ugv:supportsCapability rdf:resource="#CameraObservation"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Rover01">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#UGV"/>
+    <ugv:vehicleId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rover01</ugv:vehicleId>
+    <ugv:hasConfiguration rdf:resource="#InspectionPlatform"/>
+    <ugv:hasSnapshot rdf:resource="#Snapshot1030"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#PreCameraAvailable">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#Prerequisite"/>
+    <ugv:requiresState rdf:resource="#CameraAvailableAtObservation"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#CameraAvailableAtObservation">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#StateCondition"/>
+    <ugv:subject rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://example.org/is2/ugv-mission-planning/scenario-1#Camera01</ugv:subject>
+    <ugv:property rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://example.org/is2/ugv-mission-planning/scenario-1#availability</ugv:property>
+    <ugv:requiredValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ugv:requiredValue>
+    <ugv:applicableTime rdf:datatype="http://www.w3.org/2001/XMLSchema#string">At observation start</ugv:applicableTime>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Snapshot1030">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#VehicleStateSnapshot"/>
+    <ugv:recordedAt rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T10:30:00Z</ugv:recordedAt>
+    <ugv:snapshotOf rdf:resource="#Rover01"/>
+    <ugv:containsReading rdf:resource="#CameraReady1030"/>
+    <ugv:containsReading rdf:resource="#EnergyAvailable1030"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#CameraReady1030">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ObservedStateValue"/>
+    <ugv:subject rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://example.org/is2/ugv-mission-planning/scenario-1#Camera01</ugv:subject>
+    <ugv:property rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://example.org/is2/ugv-mission-planning/scenario-1#availability</ugv:property>
+    <ugv:observedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ugv:observedValue>
+    <ugv:readingOf rdf:resource="#Snapshot1030"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#EnergyAvailable1030">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ObservedStateValue"/>
+    <ugv:subject rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://example.org/is2/ugv-mission-planning/scenario-1#Rover01</ugv:subject>
+    <ugv:property rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://example.org/is2/ugv-mission-planning/scenario-1#availableEnergyWh</ugv:property>
+    <ugv:observedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">100</ugv:observedValue>
+    <ugv:readingOf rdf:resource="#Snapshot1030"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MissionObjectivesFactor">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#METTCFactor"/>
+    <ugv:factorName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MissionObjectives</ugv:factorName>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#EnemiesFactor">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#METTCFactor"/>
+    <ugv:factorName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Enemies</ugv:factorName>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#TerrainFactor">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#METTCFactor"/>
+    <ugv:factorName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Terrain</ugv:factorName>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#TroopsAndSupportFactor">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#METTCFactor"/>
+    <ugv:factorName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TroopsAndSupport</ugv:factorName>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#TimeAndDeadlinesFactor">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#METTCFactor"/>
+    <ugv:factorName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TimeAndDeadlines</ugv:factorName>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#CiviliansAndInfrastructureFactor">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#METTCFactor"/>
+    <ugv:factorName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CiviliansAndInfrastructure</ugv:factorName>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#ReqTerrainEntry">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#CompletenessRequirement"/>
+    <ugv:requirementId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TERRAIN-ENTRY</ugv:requirementId>
+    <ugv:expectedAssertionClass rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://example.org/is2/ugv-mission-planning#TerrainAssertion</ugv:expectedAssertionClass>
+    <ugv:scope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mission</ugv:scope>
+    <ugv:requiredField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">terrain</ugv:requiredField>
+    <ugv:applicabilityCondition rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Every controlled-site inspection brief.</ugv:applicabilityCondition>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Reserve20Wh">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlanningConstraint"/>
+    <ugv:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Minimum energy remaining after return</ugv:description>
+    <ugv:scope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Candidate completion</ugv:scope>
+    <ugv:comparison rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&gt;=</ugv:comparison>
+    <ugv:limitValue rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">20</ugv:limitValue>
+    <ugv:unitOrTimeBasis rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wh remaining</ugv:unitOrTimeBasis>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MissionAlpha">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#Mission"/>
+    <ugv:missionId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MissionAlpha</ugv:missionId>
+    <ugv:assignsVehicle rdf:resource="#Rover01"/>
+    <ugv:assignsTask rdf:resource="#MoveTask"/>
+    <ugv:assignsTask rdf:resource="#ObserveAreaTask"/>
+    <ugv:hasObjective rdf:resource="#AssessAlpha"/>
+    <ugv:setsLimit rdf:resource="#AlphaDeadline"/>
+    <ugv:setsLimit rdf:resource="#Reserve20Wh"/>
+    <ugv:hasCandidate rdf:resource="#AlphaCOA"/>
+    <ugv:documentedBy rdf:resource="#BriefA_R1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#AlphaDeadline">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlanningConstraint"/>
+    <ugv:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Complete the required return by noon.</ugv:description>
+    <ugv:scope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MissionAlpha</ugv:scope>
+    <ugv:comparison rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&lt;=</ugv:comparison>
+    <ugv:limitValue rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T12:00:00Z</ugv:limitValue>
+    <ugv:unitOrTimeBasis rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UTC</ugv:unitOrTimeBasis>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#AlphaCOA">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#CourseOfAction"/>
+    <ugv:hasVersion rdf:resource="#Alpha_V1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MissionAlphaBravo">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#Mission"/>
+    <ugv:missionId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MissionAlphaBravo</ugv:missionId>
+    <ugv:assignsVehicle rdf:resource="#Rover01"/>
+    <ugv:assignsTask rdf:resource="#MoveTask"/>
+    <ugv:assignsTask rdf:resource="#ObserveAreaTask"/>
+    <ugv:hasObjective rdf:resource="#AssessAlpha"/>
+    <ugv:hasObjective rdf:resource="#AssessBravo"/>
+    <ugv:setsLimit rdf:resource="#AlphaBravoDeadline"/>
+    <ugv:setsLimit rdf:resource="#Reserve20Wh"/>
+    <ugv:hasCandidate rdf:resource="#AlphaBravoCOA"/>
+    <ugv:documentedBy rdf:resource="#BriefAB_R1"/>
+    <ugv:documentedBy rdf:resource="#BriefAB_R2"/>
+    <ugv:documentedBy rdf:resource="#BriefAB_R3"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#AlphaBravoDeadline">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlanningConstraint"/>
+    <ugv:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Complete the required return by noon.</ugv:description>
+    <ugv:scope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MissionAlphaBravo</ugv:scope>
+    <ugv:comparison rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&lt;=</ugv:comparison>
+    <ugv:limitValue rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T12:00:00Z</ugv:limitValue>
+    <ugv:unitOrTimeBasis rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UTC</ugv:unitOrTimeBasis>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#AlphaBravoCOA">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#CourseOfAction"/>
+    <ugv:hasVersion rdf:resource="#AlphaBravo_V1"/>
+    <ugv:hasVersion rdf:resource="#AlphaBravo_V2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#BriefA_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#MissionBrief"/>
+    <ugv:briefId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BRIEF-Alpha</ugv:briefId>
+    <ugv:revision rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</ugv:revision>
+    <ugv:hasIntakeReport rdf:resource="#Intake_A_R1"/>
+    <ugv:supplies rdf:resource="#MissionObjectives_A_R1"/>
+    <ugv:supplies rdf:resource="#Enemies_A_R1"/>
+    <ugv:supplies rdf:resource="#Terrain_A_R1"/>
+    <ugv:supplies rdf:resource="#TroopsAndSupport_A_R1"/>
+    <ugv:supplies rdf:resource="#Deadline1200_A_R1"/>
+    <ugv:supplies rdf:resource="#CiviliansAndInfrastructure_A_R1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Intake_A_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#IntakeValidationReport"/>
+    <ugv:checkedAt rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T10:01:00Z</ugv:checkedAt>
+    <ugv:checkCoverage rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Six category entries, mission completion deadline, and active single-value conflicts.</ugv:checkCoverage>
+    <ugv:checkedBriefRevision rdf:resource="#BriefA_R1"/>
+    <ugv:containsResult rdf:resource="#IntakePass_A_R1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MissionObjectives_A_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#MissionObjectivesAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">objectives</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observe Alpha and return to staging.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefA_R1, paragraph 1</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlpha"/>
+    <ugv:concernsFactor rdf:resource="#MissionObjectivesFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Enemies_A_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#EnemiesAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">enemyActivity</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">No enemy activity is modeled.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefA_R1, paragraph 2</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlpha"/>
+    <ugv:concernsFactor rdf:resource="#EnemiesFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Terrain_A_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#TerrainAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">terrain</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Marked inspection surfaces are level.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefA_R1, paragraph 3</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlpha"/>
+    <ugv:concernsFactor rdf:resource="#TerrainFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#TroopsAndSupport_A_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#TroopsAndSupportAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">support</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rover01 and its inspection camera are available.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefA_R1, paragraph 4</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlpha"/>
+    <ugv:concernsFactor rdf:resource="#TroopsAndSupportFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Deadline1200_A_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#TimeAndDeadlinesAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">missionCompletionDeadline</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T12:00:00Z</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefA_R1, paragraph 5</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlpha"/>
+    <ugv:concernsFactor rdf:resource="#TimeAndDeadlinesFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#CiviliansAndInfrastructure_A_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#CiviliansAndInfrastructureAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">civilInfrastructure</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The controlled site is closed to public traffic.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefA_R1, paragraph 6</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlpha"/>
+    <ugv:concernsFactor rdf:resource="#CiviliansAndInfrastructureFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#IntakePass_A_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ValidationResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Brief intake</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">All six categories are explicit, and the mission completion deadline has one active value.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Intake_A_R1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#BriefAB_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#MissionBrief"/>
+    <ugv:briefId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BRIEF-AlphaBravo</ugv:briefId>
+    <ugv:revision rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</ugv:revision>
+    <ugv:hasIntakeReport rdf:resource="#Intake_AB_R1"/>
+    <ugv:supplies rdf:resource="#MissionObjectives_AB_R1"/>
+    <ugv:supplies rdf:resource="#Enemies_AB_R1"/>
+    <ugv:supplies rdf:resource="#TroopsAndSupport_AB_R1"/>
+    <ugv:supplies rdf:resource="#Deadline1200_AB_R1"/>
+    <ugv:supplies rdf:resource="#CiviliansAndInfrastructure_AB_R1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Intake_AB_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#IntakeValidationReport"/>
+    <ugv:checkedAt rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T10:01:00Z</ugv:checkedAt>
+    <ugv:checkCoverage rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Six category entries, mission completion deadline, and active single-value conflicts.</ugv:checkCoverage>
+    <ugv:checkedBriefRevision rdf:resource="#BriefAB_R1"/>
+    <ugv:containsResult rdf:resource="#MissingTerrain_R1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MissionObjectives_AB_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#MissionObjectivesAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">objectives</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observe Alpha and Bravo and return to staging.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R1, paragraph 1</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#MissionObjectivesFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Enemies_AB_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#EnemiesAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">enemyActivity</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">No enemy activity is modeled.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R1, paragraph 2</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#EnemiesFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#TroopsAndSupport_AB_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#TroopsAndSupportAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">support</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rover01 and its inspection camera are available.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R1, paragraph 4</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#TroopsAndSupportFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Deadline1200_AB_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#TimeAndDeadlinesAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">missionCompletionDeadline</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T12:00:00Z</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R1, paragraph 5</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#TimeAndDeadlinesFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#CiviliansAndInfrastructure_AB_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#CiviliansAndInfrastructureAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">civilInfrastructure</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The controlled site is closed to public traffic.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R1, paragraph 6</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#CiviliansAndInfrastructureFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MissingTerrain_R1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#MissingFieldResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Terrain category</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">violation</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The submitted revision contains no terrain entry.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Intake_AB_R1"/>
+    <ugv:missingField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">terrain</ugv:missingField>
+    <ugv:affectedFactor rdf:resource="#TerrainFactor"/>
+    <ugv:unmetRequirement rdf:resource="#ReqTerrainEntry"/>
+    <ugv:affectedSubject rdf:resource="#MissionAlphaBravo"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#BriefAB_R2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#MissionBrief"/>
+    <ugv:briefId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BRIEF-AlphaBravo</ugv:briefId>
+    <ugv:revision rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</ugv:revision>
+    <ugv:hasIntakeReport rdf:resource="#Intake_AB_R2"/>
+    <ugv:supplies rdf:resource="#MissionObjectives_AB_R2"/>
+    <ugv:supplies rdf:resource="#Enemies_AB_R2"/>
+    <ugv:supplies rdf:resource="#Terrain_AB_R2"/>
+    <ugv:supplies rdf:resource="#TroopsAndSupport_AB_R2"/>
+    <ugv:supplies rdf:resource="#Deadline1200_AB_R2"/>
+    <ugv:supplies rdf:resource="#CiviliansAndInfrastructure_AB_R2"/>
+    <ugv:supplies rdf:resource="#Deadline1230_AB_R2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Intake_AB_R2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#IntakeValidationReport"/>
+    <ugv:checkedAt rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T10:02:00Z</ugv:checkedAt>
+    <ugv:checkCoverage rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Six category entries, mission completion deadline, and active single-value conflicts.</ugv:checkCoverage>
+    <ugv:checkedBriefRevision rdf:resource="#BriefAB_R2"/>
+    <ugv:containsResult rdf:resource="#DeadlineConflict_R2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MissionObjectives_AB_R2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#MissionObjectivesAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">objectives</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observe Alpha and Bravo and return to staging.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R2, paragraph 1</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#MissionObjectivesFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Enemies_AB_R2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#EnemiesAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">enemyActivity</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">No enemy activity is modeled.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R2, paragraph 2</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#EnemiesFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Terrain_AB_R2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#TerrainAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">terrain</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Marked inspection surfaces are level.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R2, paragraph 3</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#TerrainFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#TroopsAndSupport_AB_R2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#TroopsAndSupportAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">support</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rover01 and its inspection camera are available.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R2, paragraph 4</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#TroopsAndSupportFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Deadline1200_AB_R2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#TimeAndDeadlinesAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">missionCompletionDeadline</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T12:00:00Z</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R2, paragraph 5</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#TimeAndDeadlinesFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#CiviliansAndInfrastructure_AB_R2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#CiviliansAndInfrastructureAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">civilInfrastructure</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The controlled site is closed to public traffic.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R2, paragraph 6</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#CiviliansAndInfrastructureFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Deadline1230_AB_R2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#TimeAndDeadlinesAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">missionCompletionDeadline</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T12:30:00Z</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R2, paragraph 7</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#TimeAndDeadlinesFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#DeadlineConflict_R2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#AssertionConflictResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Single mission completion deadline</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">violation</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Two active deadline assertions give different times for the same mission.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Intake_AB_R2"/>
+    <ugv:conflictingAssertions rdf:resource="#Deadline1200_AB_R2"/>
+    <ugv:conflictingAssertions rdf:resource="#Deadline1230_AB_R2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#BriefAB_R3">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#MissionBrief"/>
+    <ugv:briefId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BRIEF-AlphaBravo</ugv:briefId>
+    <ugv:revision rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</ugv:revision>
+    <ugv:hasIntakeReport rdf:resource="#Intake_AB_R3"/>
+    <ugv:supplies rdf:resource="#MissionObjectives_AB_R3"/>
+    <ugv:supplies rdf:resource="#Enemies_AB_R3"/>
+    <ugv:supplies rdf:resource="#Terrain_AB_R3"/>
+    <ugv:supplies rdf:resource="#TroopsAndSupport_AB_R3"/>
+    <ugv:supplies rdf:resource="#Deadline1200_AB_R3"/>
+    <ugv:supplies rdf:resource="#CiviliansAndInfrastructure_AB_R3"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Intake_AB_R3">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#IntakeValidationReport"/>
+    <ugv:checkedAt rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T10:03:00Z</ugv:checkedAt>
+    <ugv:checkCoverage rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Six category entries, mission completion deadline, and active single-value conflicts.</ugv:checkCoverage>
+    <ugv:checkedBriefRevision rdf:resource="#BriefAB_R3"/>
+    <ugv:containsResult rdf:resource="#IntakePass_AB_R3"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MissionObjectives_AB_R3">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#MissionObjectivesAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">objectives</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observe Alpha and Bravo and return to staging.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R3, paragraph 1</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#MissionObjectivesFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Enemies_AB_R3">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#EnemiesAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">enemyActivity</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">No enemy activity is modeled.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R3, paragraph 2</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#EnemiesFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Terrain_AB_R3">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#TerrainAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">terrain</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Marked inspection surfaces are level.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R3, paragraph 3</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#TerrainFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#TroopsAndSupport_AB_R3">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#TroopsAndSupportAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">support</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rover01 and its inspection camera are available.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R3, paragraph 4</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#TroopsAndSupportFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Deadline1200_AB_R3">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#TimeAndDeadlinesAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">missionCompletionDeadline</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T12:00:00Z</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R3, paragraph 5</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#TimeAndDeadlinesFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#CiviliansAndInfrastructure_AB_R3">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#CiviliansAndInfrastructureAssertion"/>
+    <ugv:field rdf:datatype="http://www.w3.org/2001/XMLSchema#string">civilInfrastructure</ugv:field>
+    <ugv:typedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The controlled site is closed to public traffic.</ugv:typedValue>
+    <ugv:sourceLocation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BriefAB_R3, paragraph 6</ugv:sourceLocation>
+    <ugv:assertionStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">active</ugv:assertionStatus>
+    <ugv:isAbout rdf:resource="#MissionAlphaBravo"/>
+    <ugv:concernsFactor rdf:resource="#CiviliansAndInfrastructureFactor"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#IntakePass_AB_R3">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ValidationResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Brief intake</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">All six categories are explicit, and the mission completion deadline has one active value.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Intake_AB_R3"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Alpha_V1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#COAVersion"/>
+    <ugv:versionId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alpha_V1</ugv:versionId>
+    <ugv:versionOf rdf:resource="#AlphaCOA"/>
+    <ugv:planningBaseline rdf:resource="#Snapshot1030"/>
+    <ugv:specifiesPlan rdf:resource="#Plan_A1"/>
+    <ugv:hasCandidateReport rdf:resource="#Report_A1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Plan_A1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#Plan"/>
+    <ugv:planOfVersion rdf:resource="#Alpha_V1"/>
+    <ugv:containsStep rdf:resource="#MoveToAlpha_A1"/>
+    <ugv:containsStep rdf:resource="#ObserveAlpha_A1"/>
+    <ugv:containsStep rdf:resource="#Return_A1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MoveToAlpha_A1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlannedMovement"/>
+    <ugv:stepId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MoveToAlpha_A1</ugv:stepId>
+    <ugv:estimatedEnergyWh rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">10</ugv:estimatedEnergyWh>
+    <ugv:estimatedDurationMinutes rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">15</ugv:estimatedDurationMinutes>
+    <ugv:stepOfPlan rdf:resource="#Plan_A1"/>
+    <ugv:usesSpecification rdf:resource="#MoveTask"/>
+    <ugv:movementOrigin rdf:resource="#Staging"/>
+    <ugv:movementDestination rdf:resource="#Alpha"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#ObserveAlpha_A1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlannedObservation"/>
+    <ugv:stepId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ObserveAlpha_A1</ugv:stepId>
+    <ugv:estimatedEnergyWh rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">8</ugv:estimatedEnergyWh>
+    <ugv:estimatedDurationMinutes rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">20</ugv:estimatedDurationMinutes>
+    <ugv:stepOfPlan rdf:resource="#Plan_A1"/>
+    <ugv:usesSpecification rdf:resource="#ObserveAreaTask"/>
+    <ugv:observationSite rdf:resource="#Alpha"/>
+    <ugv:dependsOn rdf:resource="#MoveToAlpha_A1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Return_A1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlannedMovement"/>
+    <ugv:stepId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Return_A1</ugv:stepId>
+    <ugv:estimatedEnergyWh rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">10</ugv:estimatedEnergyWh>
+    <ugv:estimatedDurationMinutes rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">15</ugv:estimatedDurationMinutes>
+    <ugv:stepOfPlan rdf:resource="#Plan_A1"/>
+    <ugv:usesSpecification rdf:resource="#MoveTask"/>
+    <ugv:movementOrigin rdf:resource="#Alpha"/>
+    <ugv:movementDestination rdf:resource="#Staging"/>
+    <ugv:dependsOn rdf:resource="#ObserveAlpha_A1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Report_A1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#CandidateValidationReport"/>
+    <ugv:checkedAt rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T10:35:00Z</ugv:checkedAt>
+    <ugv:checkCoverage rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Required checks: site access, camera readiness, objective coverage and return, deadline, energy reserve. Assumed departure 10:30 UTC; sequential execution with zero waiting.</ugv:checkCoverage>
+    <ugv:checkedVersion rdf:resource="#Alpha_V1"/>
+    <ugv:containsResult rdf:resource="#Access_A1"/>
+    <ugv:containsResult rdf:resource="#Readiness_A1"/>
+    <ugv:containsResult rdf:resource="#Completion_A1"/>
+    <ugv:containsResult rdf:resource="#Time_A1"/>
+    <ugv:containsResult rdf:resource="#Energy_A1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Access_A1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ValidationResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Access</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Exercise assumption: all planned inspection locations are authorized and available during the inspection.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_A1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Readiness_A1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ValidationResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Readiness</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Exercise assumption: the 10:30 camera availability reading persists through both planned observation windows where applicable.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_A1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Completion_A1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ValidationResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Completion</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">All assigned areas have observations and the final movement returns to staging.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_A1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Time_A1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ConstraintCheckResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Completion deadline</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Expected return at 11:20 UTC.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_A1"/>
+    <ugv:evaluatedConstraint rdf:resource="#AlphaDeadline"/>
+    <ugv:affectedSteps rdf:resource="#Return_A1"/>
+    <ugv:applicableLimit rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T12:00:00Z</ugv:applicableLimit>
+    <ugv:unitOrTimeBasis rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UTC</ugv:unitOrTimeBasis>
+    <ugv:evaluatedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T11:20:00Z</ugv:evaluatedValue>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Energy_A1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ConstraintCheckResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Energy reserve</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The predicted remaining energy meets the 20 Wh reserve.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_A1"/>
+    <ugv:evaluatedConstraint rdf:resource="#Reserve20Wh"/>
+    <ugv:applicableLimit rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">20</ugv:applicableLimit>
+    <ugv:evaluatedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">72</ugv:evaluatedValue>
+    <ugv:unitOrTimeBasis rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wh remaining</ugv:unitOrTimeBasis>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#AlphaBravo_V1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#COAVersion"/>
+    <ugv:versionId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AlphaBravo_V1</ugv:versionId>
+    <ugv:versionOf rdf:resource="#AlphaBravoCOA"/>
+    <ugv:planningBaseline rdf:resource="#Snapshot1030"/>
+    <ugv:specifiesPlan rdf:resource="#Plan_AB1"/>
+    <ugv:hasCandidateReport rdf:resource="#Report_AB1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Plan_AB1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#Plan"/>
+    <ugv:planOfVersion rdf:resource="#AlphaBravo_V1"/>
+    <ugv:containsStep rdf:resource="#MoveToAlpha_AB1"/>
+    <ugv:containsStep rdf:resource="#ObserveAlpha_AB1"/>
+    <ugv:containsStep rdf:resource="#MoveAlphaToBravo_AB1"/>
+    <ugv:containsStep rdf:resource="#ObserveBravo_AB1"/>
+    <ugv:containsStep rdf:resource="#Return_AB1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MoveToAlpha_AB1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlannedMovement"/>
+    <ugv:stepId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MoveToAlpha_AB1</ugv:stepId>
+    <ugv:estimatedEnergyWh rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">10</ugv:estimatedEnergyWh>
+    <ugv:estimatedDurationMinutes rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">15</ugv:estimatedDurationMinutes>
+    <ugv:stepOfPlan rdf:resource="#Plan_AB1"/>
+    <ugv:usesSpecification rdf:resource="#MoveTask"/>
+    <ugv:movementOrigin rdf:resource="#Staging"/>
+    <ugv:movementDestination rdf:resource="#Alpha"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#ObserveAlpha_AB1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlannedObservation"/>
+    <ugv:stepId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ObserveAlpha_AB1</ugv:stepId>
+    <ugv:estimatedEnergyWh rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">8</ugv:estimatedEnergyWh>
+    <ugv:estimatedDurationMinutes rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">20</ugv:estimatedDurationMinutes>
+    <ugv:stepOfPlan rdf:resource="#Plan_AB1"/>
+    <ugv:usesSpecification rdf:resource="#ObserveAreaTask"/>
+    <ugv:observationSite rdf:resource="#Alpha"/>
+    <ugv:dependsOn rdf:resource="#MoveToAlpha_AB1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MoveAlphaToBravo_AB1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlannedMovement"/>
+    <ugv:stepId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MoveAlphaToBravo_AB1</ugv:stepId>
+    <ugv:estimatedEnergyWh rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">12</ugv:estimatedEnergyWh>
+    <ugv:estimatedDurationMinutes rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">18</ugv:estimatedDurationMinutes>
+    <ugv:stepOfPlan rdf:resource="#Plan_AB1"/>
+    <ugv:usesSpecification rdf:resource="#MoveTask"/>
+    <ugv:movementOrigin rdf:resource="#Alpha"/>
+    <ugv:movementDestination rdf:resource="#Bravo"/>
+    <ugv:dependsOn rdf:resource="#ObserveAlpha_AB1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#ObserveBravo_AB1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlannedObservation"/>
+    <ugv:stepId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ObserveBravo_AB1</ugv:stepId>
+    <ugv:estimatedEnergyWh rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">8</ugv:estimatedEnergyWh>
+    <ugv:estimatedDurationMinutes rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">20</ugv:estimatedDurationMinutes>
+    <ugv:stepOfPlan rdf:resource="#Plan_AB1"/>
+    <ugv:usesSpecification rdf:resource="#ObserveAreaTask"/>
+    <ugv:observationSite rdf:resource="#Bravo"/>
+    <ugv:dependsOn rdf:resource="#MoveAlphaToBravo_AB1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Return_AB1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlannedMovement"/>
+    <ugv:stepId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Return_AB1</ugv:stepId>
+    <ugv:estimatedEnergyWh rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">14</ugv:estimatedEnergyWh>
+    <ugv:estimatedDurationMinutes rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">21</ugv:estimatedDurationMinutes>
+    <ugv:stepOfPlan rdf:resource="#Plan_AB1"/>
+    <ugv:usesSpecification rdf:resource="#MoveTask"/>
+    <ugv:movementOrigin rdf:resource="#Bravo"/>
+    <ugv:movementDestination rdf:resource="#Staging"/>
+    <ugv:dependsOn rdf:resource="#ObserveBravo_AB1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Report_AB1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#CandidateValidationReport"/>
+    <ugv:checkedAt rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T10:35:00Z</ugv:checkedAt>
+    <ugv:checkCoverage rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Required checks: site access, camera readiness, objective coverage and return, deadline, energy reserve. Assumed departure 10:30 UTC; sequential execution with zero waiting.</ugv:checkCoverage>
+    <ugv:checkedVersion rdf:resource="#AlphaBravo_V1"/>
+    <ugv:containsResult rdf:resource="#Access_AB1"/>
+    <ugv:containsResult rdf:resource="#Readiness_AB1"/>
+    <ugv:containsResult rdf:resource="#Completion_AB1"/>
+    <ugv:containsResult rdf:resource="#Time_AB1"/>
+    <ugv:containsResult rdf:resource="#Energy_AB1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Access_AB1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ValidationResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Access</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Exercise assumption: all planned inspection locations are authorized and available during the inspection.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_AB1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Readiness_AB1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ValidationResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Readiness</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Exercise assumption: the 10:30 camera availability reading persists through both planned observation windows where applicable.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_AB1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Completion_AB1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ValidationResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Completion</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">All assigned areas have observations and the final movement returns to staging.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_AB1"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Time_AB1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ConstraintCheckResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Completion deadline</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">violation</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Expected return at 12:04 UTC, four minutes past the limit.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_AB1"/>
+    <ugv:evaluatedConstraint rdf:resource="#AlphaBravoDeadline"/>
+    <ugv:affectedSteps rdf:resource="#Return_AB1"/>
+    <ugv:applicableLimit rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T12:00:00Z</ugv:applicableLimit>
+    <ugv:unitOrTimeBasis rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UTC</ugv:unitOrTimeBasis>
+    <ugv:evaluatedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T12:04:00Z</ugv:evaluatedValue>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Energy_AB1">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ConstraintCheckResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Energy reserve</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The predicted remaining energy meets the 20 Wh reserve.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_AB1"/>
+    <ugv:evaluatedConstraint rdf:resource="#Reserve20Wh"/>
+    <ugv:applicableLimit rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">20</ugv:applicableLimit>
+    <ugv:evaluatedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">48</ugv:evaluatedValue>
+    <ugv:unitOrTimeBasis rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wh remaining</ugv:unitOrTimeBasis>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#AlphaBravo_V2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#COAVersion"/>
+    <ugv:versionId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AlphaBravo_V2</ugv:versionId>
+    <ugv:versionOf rdf:resource="#AlphaBravoCOA"/>
+    <ugv:planningBaseline rdf:resource="#Snapshot1030"/>
+    <ugv:specifiesPlan rdf:resource="#Plan_AB2"/>
+    <ugv:hasCandidateReport rdf:resource="#Report_AB2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Plan_AB2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#Plan"/>
+    <ugv:planOfVersion rdf:resource="#AlphaBravo_V2"/>
+    <ugv:containsStep rdf:resource="#MoveToAlpha_AB2"/>
+    <ugv:containsStep rdf:resource="#ObserveAlpha_AB2"/>
+    <ugv:containsStep rdf:resource="#MoveAlphaToBravo_AB2"/>
+    <ugv:containsStep rdf:resource="#ObserveBravo_AB2"/>
+    <ugv:containsStep rdf:resource="#Return_AB2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MoveToAlpha_AB2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlannedMovement"/>
+    <ugv:stepId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MoveToAlpha_AB2</ugv:stepId>
+    <ugv:estimatedEnergyWh rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">10</ugv:estimatedEnergyWh>
+    <ugv:estimatedDurationMinutes rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">15</ugv:estimatedDurationMinutes>
+    <ugv:stepOfPlan rdf:resource="#Plan_AB2"/>
+    <ugv:usesSpecification rdf:resource="#MoveTask"/>
+    <ugv:movementOrigin rdf:resource="#Staging"/>
+    <ugv:movementDestination rdf:resource="#Alpha"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#ObserveAlpha_AB2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlannedObservation"/>
+    <ugv:stepId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ObserveAlpha_AB2</ugv:stepId>
+    <ugv:estimatedEnergyWh rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">8</ugv:estimatedEnergyWh>
+    <ugv:estimatedDurationMinutes rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">20</ugv:estimatedDurationMinutes>
+    <ugv:stepOfPlan rdf:resource="#Plan_AB2"/>
+    <ugv:usesSpecification rdf:resource="#ObserveAreaTask"/>
+    <ugv:observationSite rdf:resource="#Alpha"/>
+    <ugv:dependsOn rdf:resource="#MoveToAlpha_AB2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#MoveAlphaToBravo_AB2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlannedMovement"/>
+    <ugv:stepId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MoveAlphaToBravo_AB2</ugv:stepId>
+    <ugv:estimatedEnergyWh rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">12</ugv:estimatedEnergyWh>
+    <ugv:estimatedDurationMinutes rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">18</ugv:estimatedDurationMinutes>
+    <ugv:stepOfPlan rdf:resource="#Plan_AB2"/>
+    <ugv:usesSpecification rdf:resource="#MoveTask"/>
+    <ugv:movementOrigin rdf:resource="#Alpha"/>
+    <ugv:movementDestination rdf:resource="#Bravo"/>
+    <ugv:dependsOn rdf:resource="#ObserveAlpha_AB2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#ObserveBravo_AB2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlannedObservation"/>
+    <ugv:stepId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ObserveBravo_AB2</ugv:stepId>
+    <ugv:estimatedEnergyWh rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">8</ugv:estimatedEnergyWh>
+    <ugv:estimatedDurationMinutes rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">20</ugv:estimatedDurationMinutes>
+    <ugv:stepOfPlan rdf:resource="#Plan_AB2"/>
+    <ugv:usesSpecification rdf:resource="#ObserveAreaTask"/>
+    <ugv:observationSite rdf:resource="#Bravo"/>
+    <ugv:dependsOn rdf:resource="#MoveAlphaToBravo_AB2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Return_AB2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#PlannedMovement"/>
+    <ugv:stepId rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Return_AB2</ugv:stepId>
+    <ugv:estimatedEnergyWh rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">14</ugv:estimatedEnergyWh>
+    <ugv:stepOfPlan rdf:resource="#Plan_AB2"/>
+    <ugv:usesSpecification rdf:resource="#MoveTask"/>
+    <ugv:movementOrigin rdf:resource="#Bravo"/>
+    <ugv:movementDestination rdf:resource="#Staging"/>
+    <ugv:dependsOn rdf:resource="#ObserveBravo_AB2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Report_AB2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#CandidateValidationReport"/>
+    <ugv:checkedAt rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T10:35:00Z</ugv:checkedAt>
+    <ugv:checkCoverage rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Required checks: site access, camera readiness, objective coverage and return, deadline, energy reserve. Assumed departure 10:30 UTC; sequential execution with zero waiting.</ugv:checkCoverage>
+    <ugv:checkedVersion rdf:resource="#AlphaBravo_V2"/>
+    <ugv:containsResult rdf:resource="#Access_AB2"/>
+    <ugv:containsResult rdf:resource="#Readiness_AB2"/>
+    <ugv:containsResult rdf:resource="#Completion_AB2"/>
+    <ugv:containsResult rdf:resource="#Time_AB2"/>
+    <ugv:containsResult rdf:resource="#Energy_AB2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Access_AB2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ValidationResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Access</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Exercise assumption: all planned inspection locations are authorized and available during the inspection.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_AB2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Readiness_AB2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ValidationResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Readiness</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Exercise assumption: the 10:30 camera availability reading persists through both planned observation windows where applicable.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_AB2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Completion_AB2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ValidationResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Completion</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">All assigned areas have observations and the final movement returns to staging.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_AB2"/>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Time_AB2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ConstraintCheckResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Completion deadline</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">unresolved</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Return duration is absent; completion time is unknown.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_AB2"/>
+    <ugv:evaluatedConstraint rdf:resource="#AlphaBravoDeadline"/>
+    <ugv:affectedSteps rdf:resource="#Return_AB2"/>
+    <ugv:applicableLimit rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-11-26T12:00:00Z</ugv:applicableLimit>
+    <ugv:unitOrTimeBasis rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UTC</ugv:unitOrTimeBasis>
+  </owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="#Energy_AB2">
+    <rdf:type rdf:resource="https://example.org/is2/ugv-mission-planning#ConstraintCheckResult"/>
+    <ugv:checkName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Energy reserve</ugv:checkName>
+    <ugv:outcome rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pass</ugv:outcome>
+    <ugv:explanation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The predicted remaining energy meets the 20 Wh reserve.</ugv:explanation>
+    <ugv:resultOf rdf:resource="#Report_AB2"/>
+    <ugv:evaluatedConstraint rdf:resource="#Reserve20Wh"/>
+    <ugv:applicableLimit rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">20</ugv:applicableLimit>
+    <ugv:evaluatedValue rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">48</ugv:evaluatedValue>
+    <ugv:unitOrTimeBasis rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wh remaining</ugv:unitOrTimeBasis>
+  </owl:NamedIndividual>
+</rdf:RDF>

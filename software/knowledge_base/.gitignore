@@ -1,0 +1,6 @@
+# TDB2 database and Fuseki work area created by a native (non-Docker) run
+databases/
+run/
+
+# KG query run logs (kg_query.py / kg_agent.py)
+logs/

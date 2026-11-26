@@ -1,0 +1,13 @@
+.git/
+.vscode/
+.venv/
+**/__pycache__/
+**/*.pyc
+benchmark_results/
+hardware/
+firmware/
+docs/
+# Large local state is mounted as volumes at runtime.
+software/rag/data/
+software/rag/models/
+software/rag/logs/

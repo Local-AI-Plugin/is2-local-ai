@@ -1,0 +1,6 @@
+requests==2.34.2
+rdflib==7.6.0
+# Qwen-Agent for kg_query.py / kg_agent.py / agent.py (talks to Ollama /v1)
+qwen-agent==0.0.34
+json5==0.17.3
+soundfile==0.14.0  # imported by qwen-agent 0.0.34 but not declared as a dependency
