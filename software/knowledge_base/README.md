@@ -54,3 +54,66 @@ Install `qwen-agent`, set `LOCAL_MODEL_NAME` to an existing locally served model
 Native server/HTTP workflow tested with Fuseki 6.2.0, Java 21, Requests 2.34.2, RDFLib 7.6.0. Loading, SHACL acceptance/rejection, graph separation, type materialization, task lookup, invalid identifier rejection, and persistence after restart passed.
 
 Docker build, live Qwen-Agent inference, and the guide's illustrative Java API fragment were not executed.
+
+## KG query tests (UGV Scenario 1)
+
+Standalone path, separate from RAG: **Fuseki → Python → Qwen**. Python runs a saved
+competency-question (CQ) SPARQL query and gives Qwen only the rows. Qwen never writes SPARQL.
+
+Data: `docs/knowledge/UGV_Mission_Planning_Ontology.rdf` (classes, restrictions) and
+`docs/knowledge/UGV_Scenario_1_Individuals.rdf` (individuals). The files share no triples.
+Both are needed, because Fuseki does not follow the Scenario file's `owl:imports`.
+
+```bash
+python load_kg.py      # REPLACES the kg dataset's default graph with both RDF/XML files
+python kg_smoke.py     # no LLM: expected CQ1.1 rows, name resolution, input rejection
+```
+
+CQ queries have no `GRAPH`/`FROM`, so they read the **default graph**. The demo named graphs
+used by `client.py`/`smoke.py` are separate and untouched.
+
+### Test 1: can Qwen explain known graph results?
+
+```bash
+python kg_query.py cq1_1 --rows-only   # rows + PASS/FAIL against queries/cq1_1.expected.json
+python kg_query.py cq1_1               # rows, then Qwen's answer from those rows only
+python kg_query.py cq1_1 --task "Observe an inspection area" --mission MissionAlphaBravo
+```
+
+Check the rows before reading the answer. If the rows are wrong, the problem is the
+graph or the query. If the rows are right but the answer is wrong, the problem is the model.
+
+### Test 2: can Qwen pick the right lookup?
+
+```bash
+python kg_agent.py                     # scores queries/paraphrases.json
+python kg_agent.py "your question"
+```
+
+`query_kg` takes a `query_id` (enum from `queries/registry.json`) plus entity names. The code
+resolves each name to exactly one IRI of the expected class (local name or label, escaped
+literal) and fills the template's `{{param}}` with `<IRI>`, or `UNDEF` when omitted. Unknown
+or ambiguous names come back to the model with the known names.
+
+Runs are appended to `logs/kg_runs.jsonl` (gitignored).
+
+### Adding a CQ
+
+Put the working Protégé query in `queries/<id>.rq`, plus a `<id>_template.rq` with
+`{{param}}` placeholders and `<id>.expected.json`. Then add an entry to `registry.json` and
+paraphrases to `paraphrases.json`.
+
+### LLM access
+
+The scripts call Ollama's OpenAI-compatible API at `$OLLAMA_URL/v1` (default
+`http://127.0.0.1:11434`) with `$KG_MODEL` (default `qwen3:4b-instruct-2507-q4_K_M`). They check
+first and exit with a clear message if Ollama or the model is missing. Ollama must listen on the
+host: use the standalone `local-ai-ollama` container. Only one Ollama can use the
+`local-ai-models` volume at a time.
+
+### Caveats
+
+- Fuseki runs no OWL reasoner. CQs that depend on entailments must encode them, as the
+  `owl:hasValue` UNION branch in CQ1.1 does.
+- Future work: move mission data into named staging/active mission graphs for revisions and
+  approval. `load_kg.py --graph IRI` already loads into a named graph, and queries would add `FROM <IRI>`.
