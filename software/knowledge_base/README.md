@@ -119,7 +119,7 @@ docker compose run --rm app software/knowledge_base/kg_agent.py        # from th
 
 Only one Ollama can use the `local-ai-models` volume at a time: stop the standalone
 `local-ai-ollama` container first. To compare LLM / RAG / KG / RAG + KG answers on the same
-question, use `software/runtime/ask.py` (root `README.md`, "Docker stack").
+question, use `software/runtime/ask.py` (see [software/README.md](../README.md)).
 
 ### Caveats
 

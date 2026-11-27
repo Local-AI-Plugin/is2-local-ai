@@ -428,49 +428,9 @@ local-ai-plugin/
 
 ---
 
-# Docker stack (LLM / RAG / KG testing)
+# Running the software
 
-The root `compose.yaml` runs everything on one compose network, with no host Python needed:
-
-| Service | What it is | Host port |
-|---|---|---|
-| `ollama` | Ollama 0.40.3 (pinned digest). Models live in the `local-ai-models` volume | `127.0.0.1:11434` |
-| `ollama-pull` | One-shot pull of `$LLM_MODEL` | none |
-| `fuseki` | Jena Fuseki 6.2.0 (`software/knowledge_base/Dockerfile`) | `127.0.0.1:3030` |
-| `app` | Python image (root `Dockerfile`) with RAG, KG scripts and `software/runtime/ask.py` | none |
-
-Inside the stack, `app` reaches the other services as `http://ollama:11434` and `http://fuseki:3030/kg` (`OLLAMA_URL` and `FUSEKI_URL`). Host ports stay on loopback, so the host-venv scripts keep working against the same services. `app` is a run-to-completion CLI (profile `cli`): `docker compose run --rm app <script> [args]`.
-
-```powershell
-docker stop local-ai-ollama            # if you have the old standalone Ollama: same volume and port
-docker compose up -d --build           # ollama, model pull, fuseki
-docker compose build app
-
-# Once: RAG models/index (online), and the UGV ontology into Fuseki
-docker compose run --rm app software/rag/download_models.py   # skip if software/rag/models/ is populated
-docker compose run --rm app software/rag/rag.py ingest
-docker compose run --rm app software/knowledge_base/load_kg.py
-docker compose run --rm app software/knowledge_base/kg_smoke.py
-```
-
-## Comparing LLM, LLM + RAG, LLM + KG, LLM + RAG + KG
-
-`software/runtime/ask.py` takes the source from `--mode`, so the model never decides whether to use the documents or the graph. Every mode sends the same Ollama request options (temperature 0, seed 42, `num_ctx`, `num_predict`), so only the context differs.
-
-```powershell
-docker compose run --rm app software/runtime/ask.py --mode llm    "What is a reconnaissance mission?"
-docker compose run --rm app software/runtime/ask.py --mode rag    "What is a reconnaissance mission?"
-docker compose run --rm app software/runtime/ask.py --mode kg     --query-id cq1_1 --task "Observe an inspection area"
-docker compose run --rm app software/runtime/ask.py --mode rag+kg --query-id cq1_1 --task "Observe an inspection area"
-```
-
-- `kg` and `rag+kg` run a registered competency query (`software/knowledge_base/queries/registry.json`); the question defaults to the registry wording. Graph rows are cited `[G1]..`, document passages `[S1]..`.
-- Every run appends one record (mode, prompt, evidence, answer, model digest, timings) to `software/runtime/logs/runs.jsonl`.
-- Another model: set `LLM_MODEL` before `up`/`run` (for example `$env:LLM_MODEL = "qwen3:8b"`). It needs a tokenizer in `software/rag/models/tokenizers/` (`download_models.py --model <tag> --skip-embedding`).
-- `llm`/`rag` runs don't need Fuseki. Stop it for clean resource measurements: `docker compose stop fuseki`.
-- `docker compose down` keeps the models and Fuseki database volumes. Avoid `down -v`: it deletes the Fuseki database and can delete `local-ai-models` too, which forces the models to be pulled again.
-
-The component tests still run on their own: `software/rag/rag.py`, `software/knowledge_base/kg_query.py` and `kg_agent.py` (where Qwen picks the KG query itself). A later `--mode agent` will let the model choose between RAG and KG tools, logged in the same format so routing mistakes show up against the fixed modes.
+The LLM, RAG and knowledge-graph components run together from one Docker Compose stack (`compose.yaml` at the repo root). See [software/README.md](software/README.md) for setup, the four test modes (LLM only, + RAG, + KG, + both), and troubleshooting.
 
 ---
 

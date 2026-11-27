@@ -38,7 +38,7 @@ Put `.txt`/`.pdf` files in `software/rag/data/documents/`, then:
 
 ## Docker stack
 
-The RAG pipeline is part of the root stack (`compose.yaml` at the repo root, `app` service). See the root `README.md`, "Docker stack", for setup. From the repo root:
+The RAG pipeline is part of the root stack (`compose.yaml` at the repo root, `app` service). See [software/README.md](../README.md) for setup. From the repo root:
 
 ```powershell
 docker compose up -d --build
