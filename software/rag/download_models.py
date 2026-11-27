@@ -14,6 +14,11 @@ EMBEDDING_REPO = "BAAI/bge-small-en-v1.5"
 TOKENIZER_REPOS = {
     "qwen3:4b-instruct-2507-q4_K_M": "Qwen/Qwen3-4B-Instruct-2507",
     "qwen3:8b": "Qwen/Qwen3-8B",
+    "qwen3.5:2b-q4_K_M": "Qwen/Qwen3.5-2B",
+    "qwen3.5:2b": "Qwen/Qwen3.5-2B",
+    "qwen3.5:4b": "Qwen/Qwen3.5-4B",
+    # The RK3588 NPU model served by models/rkllm_server.py (same tokenizer as Qwen3.5-2B).
+    "qwen3.5:2b-w8a8-npu": "Qwen/Qwen3.5-2B",
 }
 
 

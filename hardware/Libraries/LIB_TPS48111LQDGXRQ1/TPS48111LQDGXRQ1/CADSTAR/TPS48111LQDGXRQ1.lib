@@ -1,0 +1,18 @@
+.TPS48111LQDGXRQ1 :1 ;TPS4811-Q1 100V Automotive Smart High-Side Driver With Protection and Diagnostics , 3.5V ~ 80V , 4A , 19-VSSOP ,-40C ~ 125C (TA)
+TPS48111LQDGXRQ1
+*STM IC
+*NGS
+*PLB 1="EN/UVLO" 2="INP_G" 3="INP" 4="'FLT_T'" 5="'FLT_I'" 6="GND" 7="IMON" 8="IWRN" 9="TMR" 10="DIODE" 11="G" 12="BST" 13="SRC" 14="PD" 15="PU" 17="CS-" 18="CS+" 19="ISCP" 20="VS"
+*MXP 19
+*DFN TPS48111LQDGXRQ1
+~!Manufacturer_Name (Texas Instruments)
+~!Manufacturer_Part_Number (TPS48111LQDGXRQ1)
+~!Mouser Part Number (595-TPS48111LQDGXRQ1)
+~!Link Mouser Price/Stock (https://www.mouser.co.uk/ProductDetail/Texas-Instruments/TPS48111LQDGXRQ1?qs=amGC7iS6iy%2Faisrr5sZ5WQ%3D%3D)
+~!Arrow Part Number (TPS48111LQDGXRQ1)
+~!Link Arrow Price/Stock (https://www.arrow.com/en/products/tps48111lqdgxrq1/texas-instruments.html?utm_currency=USD&region=nac)
+~!Link Datasheet (https://www.ti.com/lit/gpn/tps4811-q1)
+~!Height (1.1mm)
+~!3D_Model (TPS48111LQDGXRQ1)
+TPS48111LQDGXRQ1
+1.1!U 2.1!U 3.1!U 4.1!U 5.1!U 6.1!U 7.1!U 8.1!U 9.1!U 10.1!U 11.1!U 12.1!U 13.1!U 14.1!U 15.1!U 17.1!U 18.1!U 19.1!U 20.1!U 

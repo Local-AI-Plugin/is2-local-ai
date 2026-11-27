@@ -21,7 +21,7 @@ $python = "C:\Users\clarka14\.venvs\is2-local-ai\Scripts\python.exe"
 & $python software/rag/download_models.py
 ```
 
-`download_models.py --model qwen3:8b --skip-embedding` fetches another model's tokenizer. `qwen3.5:4b` isn't mapped yet: add its Hugging Face repo to `TOKENIZER_REPOS` first.
+`download_models.py --model qwen3:8b --skip-embedding` fetches another model's tokenizer. Qwen3.5 tags (`qwen3.5:2b-q4_K_M`, `qwen3.5:2b`, `qwen3.5:4b`) are mapped too. Their Ollama renderer adds no ` /no_think` with thinking off, so the preflight leaves it out for them; on the Rock 5T it matched `prompt_eval_count` exactly for `qwen3.5:2b-q4_K_M` ([docs/testing/CPU-Qwen2B-Rag.md](../../docs/testing/CPU-Qwen2B-Rag.md)).
 
 ## Use
 

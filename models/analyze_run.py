@@ -15,6 +15,16 @@ before the first request, before the model loads; the increase is the
 window's peak minus that. When RAM is nearly full, Windows pages other apps
 out, so the system RAM increase can understate what the model needs.
 
+On the RK3588 NPU run, the CSV also has NPU columns; the report then adds
+NPU temperature (start / average / peak, like the SoC), average NPU clock, and
+the interrupts each NPU core handled in the window (proof the NPU did the
+work). The devfreq NPU load is not reported: on this kernel it reads 100
+constantly.
+
+When the CSV has GPU columns (Mali, RK3588), it adds GPU temperature
+(start / average / peak), average GPU load and clock, and the share of samples
+with the GPU busy (load above 10%).
+
 Peak power is the highest battery reading in the window; the firmware
 averages over several seconds, so short spikes are smoothed out.
 Energy per token = average power x window length / generated tokens. It
@@ -58,7 +68,20 @@ def load_samples(path):
                  'battery_mwh': num(r.get('battery_mwh')),
                  'ollama_mem_gb': num(r.get('ollama_mem_gb')),
                  'ollama_cpu_pct': num(r.get('ollama_cpu_pct')),
-                 'system_ram_used_gb': num(r.get('system_ram_used_gb'))}
+                 'system_ram_used_gb': num(r.get('system_ram_used_gb')),
+                 # Linux dev-board columns; blank (None) in laptop CSVs.
+                 'soc_temp_c': num(r.get('soc_temp_c')),
+                 'cpu_temp_max_c': num(r.get('cpu_temp_max_c')),
+                 'cpu_mhz_min': num(r.get('cpu_mhz_min')),
+                 'big_cpu_mhz_min': num(r.get('big_cpu_mhz_min')),
+                 # RK3588 NPU columns; absent (None) in older CSVs.
+                 'npu_temp_c': num(r.get('npu_temp_c')),
+                 'gpu_temp_c': num(r.get('gpu_temp_c')),
+                 'gpu_mhz': num(r.get('gpu_mhz')),
+                 'gpu_load_pct': num(r.get('gpu_load_pct')),
+                 'npu_mhz': num(r.get('npu_mhz')),
+                 'npu_load_pct': num(r.get('npu_load_pct')),
+                 **{f'npu_irq_core{i}': num(r.get(f'npu_irq_core{i}')) for i in range(3)}}
                 for r in csv.DictReader(f)]
 
 
@@ -136,9 +159,49 @@ def analyze_model(records, samples, baseline_w):
         'system_ram_used_gb_increase': increase(ram_peak, ram_start),
         'ollama_cpu_pct_avg': round(sum(cpu) / len(cpu), 1) if cpu else None,
     })
+    if any(s['soc_temp_c'] is not None for s in window):
+        mhz = [s['cpu_mhz_min'] for s in window if s['cpu_mhz_min'] is not None]
+        big = [s['big_cpu_mhz_min'] for s in window if s['big_cpu_mhz_min'] is not None]
+        out.update({
+            'soc_temp_c_start': starting('soc_temp_c'),
+            'soc_temp_c_peak': peak('soc_temp_c'),
+            'cpu_temp_max_c_peak': peak('cpu_temp_max_c'),
+            # Lowest clock of any cluster; below its max means throttling.
+            'cpu_mhz_min': round(min(mhz)) if mhz else None,
+            # Big-core clusters only (CSV column added after the first board run).
+            'big_cpu_mhz_min': round(min(big)) if big else None,
+            'big_cpu_mhz_avg': round(sum(big) / len(big)) if big else None,
+        })
+    if any(s['npu_irq_core0'] is not None for s in window):
+        npu_t = [s['npu_temp_c'] for s in window if s['npu_temp_c'] is not None]
+        npu_mhz = [s['npu_mhz'] for s in window if s['npu_mhz'] is not None]
+        irq = {}
+        for i in range(3):
+            vals = [s[f'npu_irq_core{i}'] for s in window if s[f'npu_irq_core{i}'] is not None]
+            irq[f'core{i}'] = int(vals[-1] - vals[0]) if len(vals) > 1 else None
+        out.update({
+            'npu_temp_c_start': starting('npu_temp_c'),
+            'npu_temp_c_avg': round(sum(npu_t) / len(npu_t), 1) if npu_t else None,
+            'npu_temp_c_peak': peak('npu_temp_c'),
+            'npu_mhz_avg': round(sum(npu_mhz) / len(npu_mhz)) if npu_mhz else None,
+            'npu_interrupts_in_window': irq,
+        })
+    if any(s['gpu_load_pct'] is not None for s in window):
+        gl = [s['gpu_load_pct'] for s in window if s['gpu_load_pct'] is not None]
+        gm = [s['gpu_mhz'] for s in window if s['gpu_mhz'] is not None]
+        gt = [s['gpu_temp_c'] for s in window if s['gpu_temp_c'] is not None]
+        out.update({
+            'gpu_temp_c_start': starting('gpu_temp_c'),
+            'gpu_temp_c_avg': round(sum(gt) / len(gt), 1) if gt else None,
+            'gpu_temp_c_peak': peak('gpu_temp_c'),
+            'gpu_load_pct_avg': round(sum(gl) / len(gl), 1),
+            'gpu_busy_share_pct': round(100 * sum(v > 10 for v in gl) / len(gl), 1),
+            'gpu_mhz_avg': round(sum(gm) / len(gm)) if gm else None,
+        })
     powers = [s['power_w'] for s in window if s['power_w'] is not None]
     if not all(s['on_ac'] is False for s in window) or not powers:
-        out['power'] = 'laptop on AC for part of this window; no energy figures'
+        out['power'] = ('no battery power readings in this window (on AC, or no '
+                        'battery); no energy figures')
         return out
     avg_w = sum(powers) / len(powers)
     energy_j = avg_w * seconds

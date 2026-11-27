@@ -220,12 +220,15 @@ def index_info():
 def count_prompt_tokens(tokenizer, turns, model):
     # Match the request: hybrid models are sent think=false, and Ollama's qwen3
     # template then appends " /no_think" to the last user turn and an empty
-    # <think></think> block to the generation prompt. Other hybrid templates
-    # may differ; compare with the logged prompt_eval_count.
+    # <think></think> block to the generation prompt. Ollama's qwen3.5 renderer
+    # adds only the empty block (preflight matched prompt_eval_count exactly on
+    # the fixture with qwen3.5:2b-q4_K_M). Other hybrid templates may differ;
+    # compare with the logged prompt_eval_count.
     extra = {}
     if can_think(model):
         extra = {"enable_thinking": False}
-        turns = turns[:-1] + [{**turns[-1], "content": turns[-1]["content"] + " /no_think"}]
+        if not model.startswith("qwen3.5"):
+            turns = turns[:-1] + [{**turns[-1], "content": turns[-1]["content"] + " /no_think"}]
     text = tokenizer.apply_chat_template(turns, tokenize=False,
                                          add_generation_prompt=True, **extra)
     return len(tokenizer(text, add_special_tokens=False)["input_ids"])

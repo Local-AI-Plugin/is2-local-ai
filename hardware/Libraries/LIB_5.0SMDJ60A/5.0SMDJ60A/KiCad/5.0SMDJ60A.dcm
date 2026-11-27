@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP 5.0SMDJ60A
+D 96.8V Clamp 51.7A Ipp Tvs Diode Surface Mount DO-214AB (SMCJ)
+K
+F https://www.littelfuse.com/media?resourcetype=datasheets&itemid=2b2f4a8c-2e81-4894-8d41-3d748bb79e68&filename=littelfuse-tvs-diode-5-0smdj-datasheet
+$ENDCMP
+#
+#End Doc Library

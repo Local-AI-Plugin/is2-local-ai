@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP TPS48111LQDGXRQ1
+D TPS4811-Q1 100V Automotive Smart High-Side Driver With Protection and Diagnostics , 3.5V ~ 80V , 4A , 19-VSSOP ,-40C ~ 125C (TA)
+K
+F https://www.ti.com/lit/gpn/tps4811-q1
+$ENDCMP
+#
+#End Doc Library

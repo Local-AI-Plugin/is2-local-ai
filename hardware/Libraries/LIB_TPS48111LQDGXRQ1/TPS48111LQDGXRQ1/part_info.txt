@@ -1,0 +1,9 @@
+Manufacturer=Texas Instruments
+PartNumber=TPS48111LQDGXRQ1
+PartCategory=Integrated Circuit
+PackageCategory=Other
+PinCount=19
+Version=1.2
+Released=2025-05-06 06:48:54
+Downloaded=2026-10-24 04:50:31
+3D=Y
