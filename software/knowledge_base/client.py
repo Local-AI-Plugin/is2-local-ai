@@ -33,12 +33,26 @@ def update(sparql):
     response.raise_for_status()
 
 
-def put_graph(iri, turtle):
-    response = requests.put(
-        BASE + "/data", params={"graph": iri}, data=turtle.encode(),
-        headers={"Content-Type": "text/turtle"}, timeout=(3, 10)
+def _send_graph(method, iri, data, content_type):
+    # iri=None targets the dataset's default graph (Graph Store Protocol ?default).
+    params = {"default": ""} if iri is None else {"graph": iri}
+    if isinstance(data, str):
+        data = data.encode()
+    response = requests.request(
+        method, BASE + "/data", params=params, data=data,
+        headers={"Content-Type": content_type}, timeout=(3, 30)
     )
     response.raise_for_status()
+
+
+def put_graph(iri, data, content_type="text/turtle"):
+    """Replace a graph's contents."""
+    _send_graph("PUT", iri, data, content_type)
+
+
+def post_graph(iri, data, content_type="text/turtle"):
+    """Add triples to a graph, keeping what is already there."""
+    _send_graph("POST", iri, data, content_type)
 
 
 def validate_graph(iri):

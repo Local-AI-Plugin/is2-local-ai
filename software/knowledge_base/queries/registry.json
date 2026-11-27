@@ -1,0 +1,13 @@
+{
+  "cq1_1": {
+    "question": "Which vehicle capabilities does the assigned task require?",
+    "description": "Capabilities a mission's assigned task requires, with the requirement (or class axiom) that supports each one. Give the task and, if known, the mission.",
+    "file": "cq1_1.rq",
+    "template": "cq1_1_template.rq",
+    "expected": "cq1_1.expected.json",
+    "params": {
+      "task": {"class": "ugv:Task", "description": "Task name or ID, e.g. 'Observe an inspection area' or ObserveAreaTask"},
+      "mission": {"class": "ugv:Mission", "description": "Mission ID, e.g. MissionAlpha. Omit to match any mission"}
+    }
+  }
+}

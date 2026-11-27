@@ -1,0 +1,31 @@
+PREFIX ugv:  <https://example.org/is2/ugv-mission-planning#>
+PREFIX s1:   <https://example.org/is2/ugv-mission-planning/scenario-1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+
+SELECT DISTINCT ?mission ?task ?capability ?capabilityName ?requirement ?taskClass ?axiom
+WHERE {
+  # {{mission}} and {{task}} are filled by kg_query.run_query with a resolved
+  # <IRI> or UNDEF (= any). Never edit these into free text.
+  VALUES (?mission ?task) { ({{mission}} {{task}}) }
+
+  ?mission ugv:assignsTask ?task .
+
+  {
+    # The task has a requirement recorded in the graph.
+    ?task ugv:hasRequirement ?requirement .
+  }
+  UNION
+  {
+    # A task class entails that its instances have this specific requirement.
+    ?task a ?taskClass .
+    ?taskClass rdfs:subClassOf+ ?axiom .
+    ?axiom a owl:Restriction ;
+           owl:onProperty ugv:hasRequirement ;
+           owl:hasValue ?requirement .
+  }
+
+  ?requirement ugv:requiresCapability ?capability .
+  OPTIONAL { ?capability ugv:capabilityName ?capabilityName }
+}
+ORDER BY ?capabilityName

@@ -1,0 +1,12 @@
+[
+  {"question": "What capabilities does the vehicle need for the observe-area task in Mission Alpha?",
+   "expect": {"query_id": "cq1_1", "task": "s1:ObserveAreaTask", "mission": "s1:MissionAlpha"}},
+  {"question": "For Mission Alpha, what does the UGV have to be able to do to carry out the area observation task?",
+   "expect": {"query_id": "cq1_1", "task": "s1:ObserveAreaTask", "mission": "s1:MissionAlpha"}},
+  {"question": "List the capabilities required by the 'Observe an inspection area' task.",
+   "expect": {"query_id": "cq1_1", "task": "s1:ObserveAreaTask"}},
+  {"question": "Which vehicle capabilities does ObserveAreaTask need on MissionAlphaBravo?",
+   "expect": {"query_id": "cq1_1", "task": "s1:ObserveAreaTask", "mission": "s1:MissionAlphaBravo"}},
+  {"question": "Does the move task in Mission Alpha require any particular vehicle capability?",
+   "expect": {"query_id": "cq1_1", "task": "s1:MoveTask", "mission": "s1:MissionAlpha"}}
+]
