@@ -1,0 +1,91 @@
+# Local AI Plug-In stack: Ollama + Fuseki + one Python image for RAG, KG and
+# the mode runner, all on one compose network.
+#
+#   docker compose up -d                       # ollama, model pull, fuseki
+#   docker compose run --rm app software/runtime/ask.py --mode rag "question"
+#
+# Stop the standalone local-ai-ollama container first: both use the
+# local-ai-models volume and 127.0.0.1:11434. See README.md, "Docker stack".
+name: is2-local-ai
+
+x-ollama-image: &ollama-image ollama/ollama:0.40.3@sha256:adca95a12c2b386a8f9a995e7fa0600e187e3323b5e5522f5a6c3b1ec73eff99
+
+services:
+  ollama:
+    image: *ollama-image
+    volumes:
+      - models:/root/.ollama
+    # Published on loopback so host-venv scripts keep working. If the
+    # standalone Ollama is still running, `up` fails on this port instead of
+    # letting two servers share the models volume.
+    ports:
+      - "127.0.0.1:11434:11434"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+    restart: unless-stopped
+
+  ollama-pull:
+    image: *ollama-image
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    command: ["pull", "${LLM_MODEL:-qwen3:4b-instruct-2507-q4_K_M}"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    restart: "no"
+
+  fuseki:
+    build:
+      context: ./software/knowledge_base
+      args:
+        JENA_VERSION: "6.2.0"
+    ports:
+      - "127.0.0.1:3030:3030"
+    volumes:
+      - kg-data:/work/databases
+      - kg-run:/work/run
+    healthcheck:
+      # The JRE image has no curl/wget; a TCP connect means Fuseki is serving.
+      test: ["CMD", "bash", "-c", "</dev/tcp/127.0.0.1/3030"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+    mem_limit: 1g
+    cpus: 1.0
+    restart: unless-stopped
+
+  # Run-to-completion CLI: `docker compose run --rm app <script> ...`.
+  # The profile keeps `docker compose up` from starting it.
+  app:
+    build: .
+    image: is2-local-ai-app
+    profiles: ["cli"]
+    environment:
+      OLLAMA_URL: http://ollama:11434
+      FUSEKI_URL: http://fuseki:3030/kg
+      LLM_MODEL: ${LLM_MODEL:-qwen3:4b-instruct-2507-q4_K_M}
+      KG_MODEL: ${LLM_MODEL:-qwen3:4b-instruct-2507-q4_K_M}
+    volumes:
+      - ./software/rag/data:/app/software/rag/data
+      - ./software/rag/models:/app/software/rag/models
+      - ./software/rag/logs:/app/software/rag/logs
+      - ./software/knowledge_base/logs:/app/software/knowledge_base/logs
+      - ./software/runtime/logs:/app/software/runtime/logs
+      - ./docs/knowledge:/app/docs/knowledge:ro
+    # Not on fuseki: llm/rag runs don't need it. KG modes report clearly if
+    # it is down (`docker compose up -d fuseki`).
+    depends_on:
+      ollama:
+        condition: service_healthy
+      ollama-pull:
+        condition: service_completed_successfully
+
+volumes:
+  models:
+    # Reuse the volume that already holds the pulled models.
+    name: local-ai-models
+  kg-data:
+  kg-run:

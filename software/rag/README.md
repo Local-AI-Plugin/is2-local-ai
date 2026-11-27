@@ -38,20 +38,16 @@ Put `.txt`/`.pdf` files in `software/rag/data/documents/`, then:
 
 ## Docker stack
 
-`compose.yaml` runs the same pipeline with no host Python: an `ollama` service (pinned to 0.40.3), a one-shot `ollama-pull` for the model, and the `rag` CLI. `rag` reaches Ollama through the `OLLAMA_URL` variable (it is the `--server` default). `rag.py` falls back to `127.0.0.1:11434` when the variable is unset.
-
-- Ollama keeps models in the existing `local-ai-models` volume, so they are not downloaded again. Stop the standalone server first so two servers don't share the volume: `docker stop local-ai-ollama`.
-- `data/`, `models/` and `logs/` here are mounted into `rag`, so the existing corpus, index, tokenizers and run log are reused.
-- The stack's Ollama has no host port. To use another model, set `RAG_MODEL` (for example `$env:RAG_MODEL = "qwen3:8b"`) and pass the same `--model`.
-
-From `software/rag/`:
+The RAG pipeline is part of the root stack (`compose.yaml` at the repo root, `app` service). See [software/README.md](../README.md) for setup. From the repo root:
 
 ```powershell
-docker stop local-ai-ollama
-docker compose build
-docker compose run --rm --entrypoint python rag download_models.py   # once, online; skip if models/ is populated
-docker compose run --rm rag ingest
-docker compose run --rm rag ask "What connection does Cedar use to communicate with its host?"
-docker compose down          # stops Ollama; models stay in the volume
-docker start local-ai-ollama # back to the host-venv setup
+docker compose up -d --build
+docker compose build app
+docker compose run --rm app software/rag/download_models.py   # once, online; skip if models/ is populated
+docker compose run --rm app software/rag/rag.py ingest
+docker compose run --rm app software/rag/rag.py ask "What connection does Cedar use to communicate with its host?"
 ```
+
+`data/`, `models/` and `logs/` here are mounted into `app`, so the existing corpus, index, tokenizers and run log are reused. `rag.py --server` defaults to `$OLLAMA_URL`, which the stack sets to its `ollama` service. Outside Docker it falls back to `127.0.0.1:11434`.
+
+`Dockerfile` here is a standalone RAG-only image for boards where the stack's Ollama isn't used (`docker run --network host -e OLLAMA_URL=...`, as in `docs/testing/CPU-Qwen2B-Rag.md`).

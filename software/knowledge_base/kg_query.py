@@ -173,8 +173,8 @@ def check_llm(cfg=None):
         tags = requests.get(base + "/api/tags", timeout=(3, 10)).json()
     except requests.RequestException:
         raise SystemExit(
-            f"error: no Ollama at {base}. Start one that listens on the host, e.g. "
-            "`docker start local-ai-ollama` (stop any other Ollama using the "
+            f"error: no Ollama at {base}. Start the stack's with `docker compose up -d "
+            "ollama` from the repo root (stop any other Ollama using the "
             "local-ai-models volume first), or set OLLAMA_URL. "
             "Use --rows-only to skip the LLM.")
     names = {m["name"] for m in tags.get("models", [])}

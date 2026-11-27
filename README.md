@@ -428,6 +428,12 @@ local-ai-plugin/
 
 ---
 
+# Running the software
+
+The LLM, RAG and knowledge-graph components run together from one Docker Compose stack (`compose.yaml` at the repo root). See [software/README.md](software/README.md) for setup, the four test modes (LLM only, + RAG, + KG, + both), and troubleshooting.
+
+---
+
 # Current Architecture Status
 
 This repository currently represents the **conceptual architecture** of the Local AI Plug-In.

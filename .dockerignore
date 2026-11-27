@@ -11,3 +11,8 @@ docs/
 software/rag/data/
 software/rag/models/
 software/rag/logs/
+software/knowledge_base/logs/
+software/knowledge_base/workspace/
+software/knowledge_base/databases/
+software/knowledge_base/run/
+software/runtime/logs/

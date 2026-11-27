@@ -27,12 +27,14 @@ Open http://127.0.0.1:3030/ for the server UI. Wait for startup to finish before
 
 ## Docker alternative
 
+Fuseki is the `fuseki` service of the root stack (`compose.yaml` at the repo root, built from this directory's `Dockerfile`). From the repo root:
+
 ```bash
-docker compose up --build -d
+docker compose up -d --build
 docker compose logs -f fuseki
 ```
 
-Then install the Python dependencies and run the client on the host. Named volumes preserve database and server work-area data. Do not use `down -v` unless you intend to delete those volumes.
+It listens on `127.0.0.1:3030`, so the host-side client works as above. Inside the stack, the `app` service reaches it as `http://fuseki:3030/kg`. Named volumes preserve database and server work-area data. Do not use `down -v` unless you intend to delete those volumes.
 
 ## Scope
 
@@ -107,9 +109,17 @@ paraphrases to `paraphrases.json`.
 
 The scripts call Ollama's OpenAI-compatible API at `$OLLAMA_URL/v1` (default
 `http://127.0.0.1:11434`) with `$KG_MODEL` (default `qwen3:4b-instruct-2507-q4_K_M`). They check
-first and exit with a clear message if Ollama or the model is missing. Ollama must listen on the
-host: use the standalone `local-ai-ollama` container. Only one Ollama can use the
-`local-ai-models` volume at a time.
+first and exit with a clear message if Ollama or the model is missing. The root stack's `ollama`
+service serves both the host (`127.0.0.1:11434`) and the `app` service, so either works:
+
+```bash
+python kg_agent.py                                                     # host venv
+docker compose run --rm app software/knowledge_base/kg_agent.py        # from the repo root
+```
+
+Only one Ollama can use the `local-ai-models` volume at a time: stop the standalone
+`local-ai-ollama` container first. To compare LLM / RAG / KG / RAG + KG answers on the same
+question, use `software/runtime/ask.py` (see [software/README.md](../README.md)).
 
 ### Caveats
 
